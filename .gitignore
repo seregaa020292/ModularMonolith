@@ -24,7 +24,8 @@ bin/
 .DS_Store
 
 # Local env files
-#.env
+.env
+build/.env
 
 # Trash folder (caches, logs, drafts...)
 tmp/*

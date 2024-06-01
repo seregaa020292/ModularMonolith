@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=${GOMODCACHE} \
 FROM base AS test
 RUN --mount=type=cache,target=${GOMODCACHE} \
     --mount=type=bind,target=. \
-    go test -v -coverprofile=/tmp/coverage.txt ./.. > /tmp/result.txt; \
+    go test -v -coverprofile=/tmp/coverage.txt ./... > /tmp/result.txt; \
     [[ $? -eq 0 ]] || { cat /tmp/result.txt; exit 1; }
 
 FROM scratch AS test-export
