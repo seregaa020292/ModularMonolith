@@ -1,0 +1,10 @@
+README.md
+LICENSE.md
+
+.gitignore
+.gitattributes
+.git
+
+./build
+
+Makefile
