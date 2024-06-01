@@ -1,0 +1,313 @@
+openapi: '3.0.0'
+
+info:
+  version: '1.0.0'
+  title: API системы оплаты штрафов
+  description: API для управления штрафами за нарушения ПДД и их оплатой
+
+servers:
+  - url: 'http://localhost:8080'
+    description: Локальный сервер
+
+tags:
+  - name: Owners
+    description: Операции, связанные с владельцами транспортных средств
+  - name: Vehicles
+    description: Операции, связанные с транспортными средствами
+  - name: Fines
+    description: Операции, связанные с штрафами за нарушения
+  - name: Payments
+    description: Операции, связанные с платежами штрафов
+  - name: Notifications
+    description: Операции, связанные с уведомлениями о штрафах
+
+paths:
+  /owners:
+    get:
+      tags: [ Owners ]
+      summary: Получить список всех владельцев
+      operationId: listOwners
+      responses:
+        200:
+          description: Список владельцев
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Owner'
+    post:
+      tags: [ Owners ]
+      summary: Создать нового владельца
+      operationId: createOwner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Owner'
+      responses:
+        201:
+          $ref: '#/components/responses/201'
+  /vehicles:
+    get:
+      tags: [ Vehicles ]
+      summary: Получить список всех транспортных средств
+      operationId: listVehicles
+      responses:
+        200:
+          description: Список транспортных средств
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vehicle'
+    post:
+      tags: [ Vehicles ]
+      summary: Создать новое транспортное средство
+      operationId: createVehicle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+      responses:
+        201:
+          $ref: '#/components/responses/201'
+  /fines:
+    get:
+      tags: [ Fines ]
+      summary: Получить список всех штрафов
+      operationId: listFines
+      responses:
+        200:
+          description: Список штрафов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fine'
+    post:
+      tags: [ Fines ]
+      summary: Создать новый штраф
+      operationId: createFine
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fine'
+      responses:
+        201:
+          $ref: '#/components/responses/201'
+  /payments:
+    get:
+      tags: [ Payments ]
+      summary: Получить список всех платежей
+      operationId: listPayments
+      responses:
+        200:
+          description: Список платежей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+    post:
+      tags: [ Payments ]
+      summary: Создать новый платеж
+      operationId: createPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+      responses:
+        201:
+          $ref: '#/components/responses/201'
+  /notifications:
+    get:
+      tags: [ Notifications ]
+      summary: Получить список всех уведомлений
+      operationId: listNotifications
+      responses:
+        200:
+          description: Список уведомлений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+    post:
+      tags: [ Notifications ]
+      summary: Создать новое уведомление
+      operationId: createNotification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      responses:
+        201:
+          $ref: '#/components/responses/201'
+
+components:
+  responses:
+    200:
+      description: OK
+    201:
+      description: Created
+    202:
+      description: Accepted
+    204:
+      description: No Content
+    301:
+      description: Moved Permanently
+
+  schemas:
+    Owner:
+      type: object
+      required:
+        - full_name
+        - license_number
+        - phone
+        - email
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        license_number:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Vehicle:
+      type: object
+      required:
+        - license_plate
+        - model
+        - owner_id
+      properties:
+        id:
+          type: string
+          format: uuid
+        license_plate:
+          type: string
+        model:
+          type: string
+        owner_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Fine:
+      type: object
+      required:
+        - vehicle_id
+        - issue_date
+        - due_date
+        - amount
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+        vehicle_id:
+          type: string
+          format: uuid
+        issue_date:
+          type: string
+          format: date
+        due_date:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: float
+        status:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Payment:
+      type: object
+      required:
+        - fine_id
+        - amount
+        - payment_method
+      properties:
+        id:
+          type: string
+          format: uuid
+        fine_id:
+          type: string
+          format: uuid
+        paid_date:
+          type: string
+          format: date-time
+        amount:
+          type: number
+          format: float
+        payment_method:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Notification:
+      type: object
+      required:
+        - owner_id
+        - fine_id
+        - notification_type
+        - notification_status
+      properties:
+        id:
+          type: string
+          format: uuid
+        owner_id:
+          type: string
+          format: uuid
+        fine_id:
+          type: string
+          format: uuid
+        sent_at:
+          type: string
+          format: date-time
+        notification_type:
+          type: string
+        notification_status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time

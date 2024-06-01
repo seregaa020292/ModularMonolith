@@ -50,8 +50,17 @@ migration-up:
 migration-down:
 	$(LOCAL_BIN)/goose -dir $(MIGRATION_DIR) postgres ${PG_DSN} down -v
 
+generate-openapi:
+	mkdir -p ./internal/ports/oapi
+	$(LOCAL_BIN)/oapi-codegen -generate chi-server -package oapi -o ./internal/ports/oapi/openapi_server.go ./pkg/specs/openapi/swagger.yml
+	$(LOCAL_BIN)/oapi-codegen -generate types -package oapi -o ./internal/ports/oapi/openapi_types.go ./pkg/specs/openapi/swagger.yml
+	#$(LOCAL_BIN)/oapi-codegen -generate client -package oapi -o ./internal/ports/oapi/openapi_client.go ./pkg/specs/openapi/swagger.yml
+
 generate-jet:
 	$(LOCAL_BIN)/jet -source=postgres -dsn=${PG_DSN} -path=./internal/models -ignore-tables=goose_db_version
+
+generate-wire:
+	$(LOCAL_BIN)/wire ./internal/infrastructure/app
 
 env-create:
 	[ -f ./build/.env ] || cp ./build/.env.example ./build/.env
