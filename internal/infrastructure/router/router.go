@@ -13,10 +13,10 @@ import (
 
 type Router struct {
 	mux  chi.Router
-	rest httprest.HttpRest
+	rest *httprest.HttpRest
 }
 
-func NewRouter(rest httprest.HttpRest) *Router {
+func NewRouter(rest *httprest.HttpRest) *Router {
 	return &Router{
 		mux:  chi.NewRouter(),
 		rest: rest,

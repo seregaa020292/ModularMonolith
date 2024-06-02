@@ -7,7 +7,14 @@ import (
 )
 
 func main() {
-	newApp := app.New(router.NewRouter(httprest.HttpRest{}))
+	r := router.NewRouter(httprest.New(
+		httprest.NewFineHandler(),
+		httprest.NewNotificationHandler(),
+		httprest.NewOwnerHandler(),
+		httprest.NewPaymentHandler(),
+		httprest.NewVehicleHandler(),
+	))
+	newApp := app.New(r)
 	newApp.Start()
 	newApp.Stop()
 }

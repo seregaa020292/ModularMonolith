@@ -11,7 +11,18 @@ import (
 	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
 )
 
-func (h HttpRest) ListFines(ctx context.Context, request openapi.ListFinesRequestObject) (openapi.ListFinesResponseObject, error) {
+type FineHandler struct{}
+
+func NewFineHandler() *FineHandler {
+	return &FineHandler{}
+}
+
+func (h FineHandler) CreateFine(ctx context.Context, request openapi.CreateFineRequestObject) (openapi.CreateFineResponseObject, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h FineHandler) ListFines(ctx context.Context, request openapi.ListFinesRequestObject) (openapi.ListFinesResponseObject, error) {
 	return openapi.ListFines200JSONResponse{
 		{
 			Id:          gog.Ptr(uuid.New()),
