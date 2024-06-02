@@ -50,11 +50,15 @@ migration-up:
 migration-down:
 	$(LOCAL_BIN)/goose -dir $(MIGRATION_DIR) postgres ${PG_DSN} down -v
 
-generate-openapi:
-	mkdir -p ./internal/ports/oapi
-	$(LOCAL_BIN)/oapi-codegen -generate chi-server -package oapi -o ./internal/ports/oapi/openapi_server.go ./pkg/specs/openapi/swagger.yml
-	$(LOCAL_BIN)/oapi-codegen -generate types -package oapi -o ./internal/ports/oapi/openapi_types.go ./pkg/specs/openapi/swagger.yml
-	#$(LOCAL_BIN)/oapi-codegen -generate client -package oapi -o ./internal/ports/oapi/openapi_client.go ./pkg/specs/openapi/swagger.yml
+generate-oapi-server:
+	OUTPUT_DIR=./internal/infrastructure/openapi ; \
+ 	SPEC_FILE=./pkg/specs/openapi/swagger.yml ; \
+	$(LOCAL_BIN)/oapi-codegen -generate chi-server,strict-server -package openapi -o $$OUTPUT_DIR/openapi_server.go $$SPEC_FILE ; \
+	$(LOCAL_BIN)/oapi-codegen -generate types -package openapi -o $$OUTPUT_DIR/openapi_types.go $$SPEC_FILE ; \
+	$(LOCAL_BIN)/oapi-codegen -generate spec -package openapi -o $$OUTPUT_DIR/openapi_spec.go $$SPEC_FILE
+
+generate-oapi-client:
+	#$(LOCAL_BIN)/oapi-codegen -generate client -package openapi -o $$OUTPUT_DIR/openapi_client.go $$SPEC_FILE
 
 generate-jet:
 	$(LOCAL_BIN)/jet -source=postgres -dsn=${PG_DSN} -path=./internal/models -ignore-tables=goose_db_version

@@ -1,3 +1,8 @@
 #### Health Check API
 GET {{host}}/health
-Content-type: application/json
+Content-Type: application/json
+
+#### Admin Check
+GET {{host}}/admin
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=

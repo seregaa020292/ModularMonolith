@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/app"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/router"
+	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
+)
 
 func main() {
-	fmt.Println("Hello World!!!")
+	newApp := app.New(router.NewRouter(httprest.HttpRest{}))
+	newApp.Start()
+	newApp.Stop()
 }
