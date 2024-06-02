@@ -18,6 +18,18 @@ services:
       PG_PORT: 5432
     restart: on-failure
 
+  app-swagger:
+    image: swaggerapi/swagger-ui
+    environment:
+      SWAGGER_JSON: /specs/swagger.yml
+    ports:
+      - "${SWAGGER_UI_PORT:-8081}:8080"
+    volumes:
+      - type: bind
+        source: ../pkg/specs/openapi
+        target: /specs
+        read_only: true
+
   app-pg:
     image: postgres:15-alpine
     environment:
