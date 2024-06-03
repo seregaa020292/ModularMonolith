@@ -5,10 +5,13 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httprate"
 	nethttpmiddleware "github.com/oapi-codegen/nethttp-middleware"
 
+	"github.com/seregaa020292/ModularMonolith/internal/config/consts"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
+	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
 )
 
 type Router struct {
@@ -24,14 +27,21 @@ func NewRouter(rest *httprest.HttpRest) *Router {
 }
 
 func (router Router) Setup() http.Handler {
-	swagger, err := openapi.GetSwagger()
-	if err != nil {
-		panic(err)
-	}
+	swagger := gog.Must(openapi.GetSwagger())
 
 	swagger.Servers = nil
 
-	router.setupMiddlewares()
+	router.mux.Use(middleware.Heartbeat("/health"))
+	router.mux.Use(httprate.LimitByIP(consts.HttpRateRequestLimit, consts.HttpRateWindowLength))
+	router.mux.Use(middleware.StripSlashes)
+	router.mux.Use(middleware.RequestID)
+	router.mux.Use(middleware.RealIP)
+	router.mux.Use(middleware.Recoverer)
+	router.mux.Use(
+		middleware.SetHeader("X-Content-Type-Options", "nosniff"),
+		middleware.SetHeader("X-Frame-Options", "deny"),
+		middleware.SetHeader("X-Xss-Protection", "1; mode=block"),
+	)
 
 	router.mux.Group(func(r chi.Router) {
 		r.Use(nethttpmiddleware.OapiRequestValidatorWithOptions(swagger, nil))
@@ -40,9 +50,7 @@ func (router Router) Setup() http.Handler {
 
 	router.mux.Route("/admin", func(r chi.Router) {
 		r.Use(middleware.BasicAuth("Admin Panel", map[string]string{"admin": "admin"}))
-		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("Hello admin"))
-		})
+		r.Get("/", router.rest.AdminHandler.Home)
 	})
 
 	router.mux.NotFound(func(w http.ResponseWriter, r *http.Request) {

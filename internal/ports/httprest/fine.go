@@ -7,13 +7,14 @@ import (
 	"github.com/google/uuid"
 	openapitypes "github.com/oapi-codegen/runtime/types"
 
+	"github.com/seregaa020292/ModularMonolith/internal/fine/repository"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
 	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
 )
 
 type FineHandler struct{}
 
-func NewFineHandler() *FineHandler {
+func NewFineHandler(fineRepo *repository.FineRepo) *FineHandler {
 	return &FineHandler{}
 }
 

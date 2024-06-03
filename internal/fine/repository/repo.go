@@ -1,11 +1,13 @@
 package repository
 
-import "database/sql"
+import (
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
+)
 
 type FineRepo struct {
-	db *sql.DB
+	db *pg.DB
 }
 
-func NewFineRepo(db *sql.DB) *FineRepo {
+func NewFineRepo(db *pg.DB) *FineRepo {
 	return &FineRepo{db: db}
 }

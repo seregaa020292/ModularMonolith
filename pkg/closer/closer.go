@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-// Closer graceful shutdown
+// Closer обеспечивает корректное завершение работы
 type Closer struct {
 	mu    sync.Mutex
 	once  sync.Once
@@ -15,7 +15,7 @@ type Closer struct {
 	funcs []func() error
 }
 
-// New returns new Closer, if []os.Signal is specified Closer will automatically call CloseAll when one of signals is received from OS
+// New возвращает новый Closer, если указаны []os.Signal, Closer автоматически вызовет CloseAll, когда один из сигналов получен от ОС
 func New(sig ...os.Signal) *Closer {
 	c := &Closer{done: make(chan struct{})}
 	if len(sig) > 0 {
@@ -30,19 +30,19 @@ func New(sig ...os.Signal) *Closer {
 	return c
 }
 
-// Add func to closer
+// Add добавляет функцию в Closer
 func (c *Closer) Add(f ...func() error) {
 	c.mu.Lock()
 	c.funcs = append(c.funcs, f...)
 	c.mu.Unlock()
 }
 
-// Wait blocks until all closer functions are done
+// Wait блокирует выполнение до тех пор, пока все функции Closer не будут выполнены
 func (c *Closer) Wait() {
 	<-c.done
 }
 
-// CloseAll calls all closer functions
+// CloseAll вызывает все функции Closer
 func (c *Closer) CloseAll() {
 	c.once.Do(func() {
 		defer close(c.done)
@@ -52,7 +52,7 @@ func (c *Closer) CloseAll() {
 		c.funcs = nil
 		c.mu.Unlock()
 
-		// call all Closer funcs async
+		// вызываем все функции Closer асинхронно
 		errs := make(chan error, len(funcs))
 		for _, f := range funcs {
 			go func(f func() error) {
@@ -62,7 +62,7 @@ func (c *Closer) CloseAll() {
 
 		for i := 0; i < cap(errs); i++ {
 			if err := <-errs; err != nil {
-				log.Println("Error returned from Closer")
+				log.Println("error returned from Closer")
 			}
 		}
 	})

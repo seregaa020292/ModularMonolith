@@ -1,36 +1,60 @@
 package app
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
-	"net"
 	"net/http"
+	"os"
+	"syscall"
 
-	"github.com/seregaa020292/ModularMonolith/internal/config/consts"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/router"
+	"github.com/seregaa020292/ModularMonolith/internal/config"
+	"github.com/seregaa020292/ModularMonolith/pkg/closer"
 )
 
 type App struct {
-	router *router.Router
+	cfg    config.Config
+	closer *closer.Closer
 }
 
-func New(router *router.Router) *App {
+func New(cfg config.Config) *App {
 	return &App{
-		router: router,
+		cfg: cfg,
+		closer: closer.New(
+			os.Interrupt,
+			syscall.SIGHUP,
+			syscall.SIGINT,
+			syscall.SIGTERM,
+			syscall.SIGQUIT,
+		),
 	}
 }
 
-func (app *App) Start() {
-	serv := &http.Server{
-		Addr:    net.JoinHostPort("", consts.ServerPort),
-		Handler: app.router.Setup(),
+func (app App) Run(ctx context.Context) {
+	provide, clean, err := NewServiceProvider(ctx, app.cfg)
+	if err != nil {
+		panic(err)
 	}
 
-	slog.Info("starting http server on " + serv.Addr)
+	defer app.gracefulStop()
+
+	app.closer.Add(func() error {
+		clean()
+		return nil
+	})
+
+	serv := &http.Server{
+		Addr:    app.cfg.App.Addr(),
+		Handler: provide.Router.Setup(),
+	}
+
+	slog.Info(fmt.Sprintf(`starting app "%s" on %s`, app.cfg.App.Name, serv.Addr))
 	if err := serv.ListenAndServe(); err != nil {
 		panic(err)
 	}
 }
 
-func (app *App) Stop() {
-
+func (app App) gracefulStop() {
+	app.closer.CloseAll()
+	app.closer.Wait()
 }

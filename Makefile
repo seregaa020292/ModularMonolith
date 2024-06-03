@@ -27,7 +27,7 @@ rebuild:
 	docker compose -f $(COMPOSE_FILE) up -d --no-deps --build $(CMD_ARGS)
 
 logs:
-	docker compose -f $(COMPOSE_FILE) logs -f
+	docker compose -f $(COMPOSE_FILE) logs -f $(CMD_ARGS)
 
 lint:
 	$(LOCAL_BIN)/golangci-lint run

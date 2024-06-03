@@ -1,20 +1,16 @@
 package main
 
 import (
+	"context"
+
+	"github.com/seregaa020292/ModularMonolith/internal/config"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/app"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/router"
-	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
+	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
 )
 
 func main() {
-	r := router.NewRouter(httprest.New(
-		httprest.NewFineHandler(),
-		httprest.NewNotificationHandler(),
-		httprest.NewOwnerHandler(),
-		httprest.NewPaymentHandler(),
-		httprest.NewVehicleHandler(),
-	))
-	newApp := app.New(r)
-	newApp.Start()
-	newApp.Stop()
+	cfg := gog.Must(config.New())
+
+	newApp := app.New(cfg)
+	newApp.Run(context.Background())
 }

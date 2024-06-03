@@ -12,6 +12,8 @@ type HttpRest struct {
 	*OwnerHandler
 	*PaymentHandler
 	*VehicleHandler
+
+	*AdminHandler
 }
 
 func New(
@@ -20,6 +22,8 @@ func New(
 	ownerHandler *OwnerHandler,
 	paymentHandler *PaymentHandler,
 	vehicleHandler *VehicleHandler,
+
+	adminHandler *AdminHandler,
 ) *HttpRest {
 	return &HttpRest{
 		FineHandler:         fineHandler,
@@ -27,5 +31,7 @@ func New(
 		OwnerHandler:        ownerHandler,
 		PaymentHandler:      paymentHandler,
 		VehicleHandler:      vehicleHandler,
+
+		AdminHandler: adminHandler,
 	}
 }
