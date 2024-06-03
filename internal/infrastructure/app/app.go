@@ -10,6 +10,7 @@ import (
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
 	"github.com/seregaa020292/ModularMonolith/pkg/closer"
+	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
 )
 
 type App struct {
@@ -37,21 +38,24 @@ func (app App) Run(ctx context.Context) {
 	}
 
 	defer app.gracefulStop()
-
-	app.closer.Add(func() error {
-		clean()
-		return nil
-	})
+	app.addCloser(clean)
 
 	serv := &http.Server{
 		Addr:    app.cfg.App.Addr(),
-		Handler: provide.Router.Setup(),
+		Handler: gog.Must(provide.Router.Setup()),
 	}
 
 	slog.Info(fmt.Sprintf(`starting app "%s" on %s`, app.cfg.App.Name, serv.Addr))
 	if err := serv.ListenAndServe(); err != nil {
 		panic(err)
 	}
+}
+
+func (app App) addCloser(fn func()) {
+	app.closer.Add(func() error {
+		fn()
+		return nil
+	})
 }
 
 func (app App) gracefulStop() {

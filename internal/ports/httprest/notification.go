@@ -4,11 +4,12 @@ import (
 	"context"
 
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
+	"github.com/seregaa020292/ModularMonolith/internal/notification/repository"
 )
 
 type NotificationHandler struct{}
 
-func NewNotificationHandler() *NotificationHandler {
+func NewNotificationHandler(repo *repository.NotificationRepo) *NotificationHandler {
 	return &NotificationHandler{}
 }
 

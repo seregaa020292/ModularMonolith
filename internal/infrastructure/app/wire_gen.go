@@ -12,6 +12,7 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/fine/repository"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/router"
+	repository2 "github.com/seregaa020292/ModularMonolith/internal/notification/repository"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
 )
 
@@ -25,7 +26,8 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 	}
 	fineRepo := repository.NewFineRepo(db)
 	fineHandler := httprest.NewFineHandler(fineRepo)
-	notificationHandler := httprest.NewNotificationHandler()
+	notificationRepo := repository2.NewNotificationRepo(db)
+	notificationHandler := httprest.NewNotificationHandler(notificationRepo)
 	ownerHandler := httprest.NewOwnerHandler()
 	paymentHandler := httprest.NewPaymentHandler()
 	vehicleHandler := httprest.NewVehicleHandler()

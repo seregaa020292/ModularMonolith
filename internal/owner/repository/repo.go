@@ -1,11 +1,13 @@
 package repository
 
-import "database/sql"
+import (
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
+)
 
 type OwnerRepo struct {
-	db *sql.DB
+	db *pg.DB
 }
 
-func NewOwnerRepo(db *sql.DB) *OwnerRepo {
+func NewOwnerRepo(db *pg.DB) *OwnerRepo {
 	return &OwnerRepo{db: db}
 }

@@ -11,7 +11,6 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/config/consts"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
-	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
 )
 
 type Router struct {
@@ -26,8 +25,11 @@ func NewRouter(rest *httprest.HttpRest) *Router {
 	}
 }
 
-func (router Router) Setup() http.Handler {
-	swagger := gog.Must(openapi.GetSwagger())
+func (router Router) Setup() (http.Handler, error) {
+	swagger, err := openapi.GetSwagger()
+	if err != nil {
+		return nil, err
+	}
 
 	swagger.Servers = nil
 
@@ -58,5 +60,5 @@ func (router Router) Setup() http.Handler {
 		w.Write([]byte(http.StatusText(http.StatusNotFound)))
 	})
 
-	return router.mux
+	return router.mux, nil
 }

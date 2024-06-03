@@ -1,11 +1,13 @@
 package repository
 
-import "database/sql"
+import (
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
+)
 
 type NotificationRepo struct {
-	db *sql.DB
+	db *pg.DB
 }
 
-func NewNotificationRepo(db *sql.DB) *NotificationRepo {
+func NewNotificationRepo(db *pg.DB) *NotificationRepo {
 	return &NotificationRepo{db: db}
 }

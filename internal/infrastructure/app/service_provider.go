@@ -9,9 +9,10 @@ import (
 	"github.com/google/wire"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
-	"github.com/seregaa020292/ModularMonolith/internal/fine/repository"
+	fineRepo "github.com/seregaa020292/ModularMonolith/internal/fine/repository"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/router"
+	notificationRepo "github.com/seregaa020292/ModularMonolith/internal/notification/repository"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
 )
 
@@ -23,7 +24,8 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 	panic(wire.Build(
 		wire.FieldsOf(new(config.Config), "PG"),
 		pg.New,
-		repository.NewFineRepo,
+		fineRepo.NewFineRepo,
+		notificationRepo.NewNotificationRepo,
 		httprest.NewFineHandler,
 		httprest.NewNotificationHandler,
 		httprest.NewOwnerHandler,

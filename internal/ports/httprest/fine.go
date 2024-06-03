@@ -14,7 +14,7 @@ import (
 
 type FineHandler struct{}
 
-func NewFineHandler(fineRepo *repository.FineRepo) *FineHandler {
+func NewFineHandler(repo *repository.FineRepo) *FineHandler {
 	return &FineHandler{}
 }
 
