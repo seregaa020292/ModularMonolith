@@ -18,6 +18,10 @@ import (
 
 // Injectors from service_provider.go:
 
+// NewServiceProvider Функция использует Google Wire для автоматической сборки зависимостей.
+//
+// В качестве параметров принимает контекст выполнения ctx и конфигурацию cfg.
+// Возвращает указатель на serviceProvider, функцию для очистки и ошибку, если таковая возникнет.
 func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvider, func(), error) {
 	configPG := cfg.PG
 	db, cleanup, err := pg.New(configPG)

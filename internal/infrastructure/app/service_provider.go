@@ -9,10 +9,10 @@ import (
 	"github.com/google/wire"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
-	fineRepo "github.com/seregaa020292/ModularMonolith/internal/fine/repository"
+	"github.com/seregaa020292/ModularMonolith/internal/fine"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/router"
-	notificationRepo "github.com/seregaa020292/ModularMonolith/internal/notification/repository"
+	"github.com/seregaa020292/ModularMonolith/internal/notification"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
 )
 
@@ -20,12 +20,19 @@ type serviceProvider struct {
 	Router *router.Router
 }
 
+// NewServiceProvider Функция использует Google Wire для автоматической сборки зависимостей.
+//
+// В качестве параметров принимает контекст выполнения ctx и конфигурацию cfg.
+// Возвращает указатель на serviceProvider, функцию для очистки и ошибку, если таковая возникнет.
 func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvider, func(), error) {
 	panic(wire.Build(
 		wire.FieldsOf(new(config.Config), "PG"),
+
 		pg.New,
-		fineRepo.NewFineRepo,
-		notificationRepo.NewNotificationRepo,
+
+		fine.ModuleSet,
+		notification.ModuleSet,
+
 		httprest.NewFineHandler,
 		httprest.NewNotificationHandler,
 		httprest.NewOwnerHandler,
@@ -34,6 +41,7 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		httprest.NewAdminHandler,
 		httprest.New,
 		router.NewRouter,
+
 		wire.Struct(new(serviceProvider), "*"),
 	))
 }
