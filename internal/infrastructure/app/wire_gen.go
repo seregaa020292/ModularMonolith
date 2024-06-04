@@ -17,7 +17,6 @@ import (
 	repository3 "github.com/seregaa020292/ModularMonolith/internal/owner/repository"
 	repository4 "github.com/seregaa020292/ModularMonolith/internal/payment/repository"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
-	"log/slog"
 )
 
 // Injectors from service_provider.go:
@@ -56,10 +55,10 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		return nil, nil, err
 	}
 	app := cfg.App
-	slogLogger := logger.New(app)
+	loggerLogger := logger.New(app)
 	appServiceProvider := &serviceProvider{
 		Router: routerRouter,
-		Logger: slogLogger,
+		Logger: loggerLogger,
 	}
 	return appServiceProvider, func() {
 		cleanup()
@@ -70,5 +69,5 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 
 type serviceProvider struct {
 	Router *router.Router
-	Logger *slog.Logger
+	Logger *logger.Logger
 }

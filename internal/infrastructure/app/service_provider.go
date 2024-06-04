@@ -5,7 +5,6 @@ package app
 
 import (
 	"context"
-	"log/slog"
 
 	"github.com/google/wire"
 
@@ -22,7 +21,7 @@ import (
 
 type serviceProvider struct {
 	Router *router.Router
-	Logger *slog.Logger
+	Logger *logger.Logger
 }
 
 // NewServiceProvider функция использует Google Wire для автоматической сборки зависимостей.

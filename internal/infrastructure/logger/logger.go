@@ -12,7 +12,7 @@ type Logger struct {
 	*slog.Logger
 }
 
-func New(cfg config.App) *slog.Logger {
+func New(cfg config.App) *Logger {
 	var (
 		level   slog.Level
 		handler slog.Handler
@@ -38,5 +38,5 @@ func New(cfg config.App) *slog.Logger {
 
 	slog.SetDefault(logger)
 
-	return logger
+	return &Logger{Logger: logger}
 }
