@@ -10,17 +10,19 @@ import (
 	"context"
 	"github.com/seregaa020292/ModularMonolith/internal/config"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/repository"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/logger"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/router"
 	repository2 "github.com/seregaa020292/ModularMonolith/internal/notification/repository"
 	repository3 "github.com/seregaa020292/ModularMonolith/internal/owner/repository"
 	repository4 "github.com/seregaa020292/ModularMonolith/internal/payment/repository"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
+	"log/slog"
 )
 
 // Injectors from service_provider.go:
 
-// NewServiceProvider Функция использует Google Wire для автоматической сборки зависимостей.
+// NewServiceProvider функция использует Google Wire для автоматической сборки зависимостей.
 //
 // В качестве параметров принимает контекст выполнения ctx и конфигурацию cfg.
 // Возвращает указатель на serviceProvider, функцию для очистки и ошибку, если таковая возникнет.
@@ -53,8 +55,11 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		cleanup()
 		return nil, nil, err
 	}
+	app := cfg.App
+	slogLogger := logger.New(app)
 	appServiceProvider := &serviceProvider{
 		Router: routerRouter,
+		Logger: slogLogger,
 	}
 	return appServiceProvider, func() {
 		cleanup()
@@ -65,4 +70,5 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 
 type serviceProvider struct {
 	Router *router.Router
+	Logger *slog.Logger
 }

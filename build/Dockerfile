@@ -50,7 +50,7 @@ RUN --mount=type=cache,target=${GOMODCACHE} \
 FROM base AS development
 ARG AIR_VERSION=1.52.0
 RUN --mount=type=cache,target=${GOMODCACHE} \
-    go install github.com/cosmtrek/air@v${AIR_VERSION}
+    go install github.com/air-verse/air@v${AIR_VERSION}
 ENV CGO_ENABLED=$TARGET_CGO_ENABLED \
     GOOS=$TARGET_OS \
     GOARCH=$TARGET_ARCH

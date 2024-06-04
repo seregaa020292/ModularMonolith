@@ -7,8 +7,10 @@ import (
 )
 
 type App struct {
-	Name string `env:"APP_NAME" env-default:""`
-	Env  string `env:"ENV" env-default:"development"`
+	Name         string `env:"APP_NAME" env-default:""`
+	Env          string `env:"ENV" env-default:"development"`
+	LogFormatter string `env:"LOG_FORMATTER" env-default:"text"`
+	LogLevel     string `env:"LOG_LEVEL" env-default:"info"`
 }
 
 func (a App) IsProduction() bool {

@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -45,7 +44,7 @@ func (app App) Run(ctx context.Context) {
 		Handler: gog.Must(provide.Router.Setup()),
 	}
 
-	slog.Info(fmt.Sprintf(`starting app "%s" on %s`, app.cfg.App.Name, serv.Addr))
+	slog.Info("starting server", "app", app.cfg.App.Name, "on", serv.Addr)
 	if err := serv.ListenAndServe(); err != nil {
 		panic(err)
 	}

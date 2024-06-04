@@ -13,6 +13,8 @@ services:
     environment:
       APP_NAME: ${APP_NAME}
       ENV: ${ENV}
+      LOG_FORMATTER: ${LOG_FORMATTER}
+      LOG_LEVEL: ${LOG_LEVEL}
       PG_DB: ${PG_DB}
       PG_USER: ${PG_USER}
       PG_PASSWORD: ${PG_PASSWORD}

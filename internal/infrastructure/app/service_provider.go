@@ -5,11 +5,13 @@ package app
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/google/wire"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
 	"github.com/seregaa020292/ModularMonolith/internal/fine"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/logger"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/router"
 	"github.com/seregaa020292/ModularMonolith/internal/notification"
@@ -20,16 +22,18 @@ import (
 
 type serviceProvider struct {
 	Router *router.Router
+	Logger *slog.Logger
 }
 
-// NewServiceProvider Функция использует Google Wire для автоматической сборки зависимостей.
+// NewServiceProvider функция использует Google Wire для автоматической сборки зависимостей.
 //
 // В качестве параметров принимает контекст выполнения ctx и конфигурацию cfg.
 // Возвращает указатель на serviceProvider, функцию для очистки и ошибку, если таковая возникнет.
 func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvider, func(), error) {
 	panic(wire.Build(
-		wire.FieldsOf(new(config.Config), "PG"),
+		wire.FieldsOf(new(config.Config), "App", "PG"),
 
+		logger.New,
 		pg.New,
 
 		fine.ModuleSet,
