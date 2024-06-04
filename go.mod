@@ -14,6 +14,7 @@ require (
 	github.com/oapi-codegen/nethttp-middleware v1.0.1
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pkg/errors v0.9.1
+	github.com/stretchr/testify v1.9.0
 )
 
 require (
@@ -30,7 +31,6 @@ require (
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/stretchr/testify v1.9.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	olympos.io/encoding/edn v0.0.0-20201019073823-d3554ca0b0a3 // indirect
 )
