@@ -1,4 +1,4 @@
-package router
+package middleware
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 
 type correlationIDKey struct{}
 
-func NewCorrelationID(next http.Handler) http.Handler {
+func CorrelationID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id := r.Header.Get("Correlation-ID")
 		if id == "" {
