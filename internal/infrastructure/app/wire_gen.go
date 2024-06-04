@@ -40,7 +40,14 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 	paymentHandler := httprest.NewPaymentHandler(paymentRepo)
 	vehicleHandler := httprest.NewVehicleHandler()
 	adminHandler := httprest.NewAdminHandler()
-	httpRest := httprest.New(fineHandler, notificationHandler, ownerHandler, paymentHandler, vehicleHandler, adminHandler)
+	httpRest := &httprest.HttpRest{
+		FineHandler:         fineHandler,
+		NotificationHandler: notificationHandler,
+		OwnerHandler:        ownerHandler,
+		PaymentHandler:      paymentHandler,
+		VehicleHandler:      vehicleHandler,
+		AdminHandler:        adminHandler,
+	}
 	routerRouter, err := router.New(httpRest)
 	if err != nil {
 		cleanup()

@@ -43,7 +43,7 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		httprest.NewPaymentHandler,
 		httprest.NewVehicleHandler,
 		httprest.NewAdminHandler,
-		httprest.New,
+		wire.Struct(new(httprest.HttpRest), "*"),
 		router.New,
 
 		wire.Struct(new(serviceProvider), "*"),

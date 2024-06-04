@@ -15,23 +15,3 @@ type HttpRest struct {
 
 	*AdminHandler
 }
-
-func New(
-	fineHandler *FineHandler,
-	notificationHandler *NotificationHandler,
-	ownerHandler *OwnerHandler,
-	paymentHandler *PaymentHandler,
-	vehicleHandler *VehicleHandler,
-
-	adminHandler *AdminHandler,
-) *HttpRest {
-	return &HttpRest{
-		FineHandler:         fineHandler,
-		NotificationHandler: notificationHandler,
-		OwnerHandler:        ownerHandler,
-		PaymentHandler:      paymentHandler,
-		VehicleHandler:      vehicleHandler,
-
-		AdminHandler: adminHandler,
-	}
-}
