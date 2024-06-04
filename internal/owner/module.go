@@ -1,5 +1,11 @@
 package owner
 
-import "github.com/google/wire"
+import (
+	"github.com/google/wire"
 
-var ModuleSet = wire.NewSet()
+	"github.com/seregaa020292/ModularMonolith/internal/owner/repository"
+)
+
+var ModuleSet = wire.NewSet(
+	repository.NewOwnerRepo,
+)

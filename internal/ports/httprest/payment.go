@@ -4,11 +4,12 @@ import (
 	"context"
 
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
+	"github.com/seregaa020292/ModularMonolith/internal/payment/repository"
 )
 
 type PaymentHandler struct{}
 
-func NewPaymentHandler() *PaymentHandler {
+func NewPaymentHandler(repo *repository.PaymentRepo) *PaymentHandler {
 	return &PaymentHandler{}
 }
 

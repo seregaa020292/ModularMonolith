@@ -1,11 +1,13 @@
 package repository
 
-import "database/sql"
+import (
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
+)
 
 type PaymentRepo struct {
-	db *sql.DB
+	db *pg.DB
 }
 
-func NewPaymentRepo(db *sql.DB) *PaymentRepo {
+func NewPaymentRepo(db *pg.DB) *PaymentRepo {
 	return &PaymentRepo{db: db}
 }

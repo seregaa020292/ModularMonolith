@@ -1,5 +1,11 @@
 package report
 
-import "github.com/google/wire"
+import (
+	"github.com/google/wire"
 
-var ModuleSet = wire.NewSet()
+	"github.com/seregaa020292/ModularMonolith/internal/report/repository"
+)
+
+var ModuleSet = wire.NewSet(
+	repository.NewReportRepo,
+)

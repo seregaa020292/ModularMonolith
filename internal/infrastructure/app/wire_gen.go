@@ -13,6 +13,8 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/router"
 	repository2 "github.com/seregaa020292/ModularMonolith/internal/notification/repository"
+	repository3 "github.com/seregaa020292/ModularMonolith/internal/owner/repository"
+	repository4 "github.com/seregaa020292/ModularMonolith/internal/payment/repository"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
 )
 
@@ -32,12 +34,18 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 	fineHandler := httprest.NewFineHandler(fineRepo)
 	notificationRepo := repository2.NewNotificationRepo(db)
 	notificationHandler := httprest.NewNotificationHandler(notificationRepo)
-	ownerHandler := httprest.NewOwnerHandler()
-	paymentHandler := httprest.NewPaymentHandler()
+	ownerRepo := repository3.NewOwnerRepo(db)
+	ownerHandler := httprest.NewOwnerHandler(ownerRepo)
+	paymentRepo := repository4.NewPaymentRepo(db)
+	paymentHandler := httprest.NewPaymentHandler(paymentRepo)
 	vehicleHandler := httprest.NewVehicleHandler()
 	adminHandler := httprest.NewAdminHandler()
 	httpRest := httprest.New(fineHandler, notificationHandler, ownerHandler, paymentHandler, vehicleHandler, adminHandler)
-	routerRouter := router.NewRouter(httpRest)
+	routerRouter, err := router.New(httpRest)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 	appServiceProvider := &serviceProvider{
 		Router: routerRouter,
 	}

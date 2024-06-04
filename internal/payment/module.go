@@ -1,5 +1,11 @@
 package payment
 
-import "github.com/google/wire"
+import (
+	"github.com/google/wire"
 
-var ModuleSet = wire.NewSet()
+	"github.com/seregaa020292/ModularMonolith/internal/payment/repository"
+)
+
+var ModuleSet = wire.NewSet(
+	repository.NewPaymentRepo,
+)

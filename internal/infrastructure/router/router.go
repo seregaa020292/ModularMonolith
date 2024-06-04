@@ -3,6 +3,7 @@ package router
 import (
 	"net/http"
 
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httprate"
@@ -14,24 +15,26 @@ import (
 )
 
 type Router struct {
-	mux  chi.Router
-	rest *httprest.HttpRest
+	mux     chi.Router
+	rest    *httprest.HttpRest
+	swagger *openapi3.T
 }
 
-func NewRouter(rest *httprest.HttpRest) *Router {
-	return &Router{
-		mux:  chi.NewRouter(),
-		rest: rest,
-	}
-}
-
-func (router Router) Setup() (http.Handler, error) {
+func New(rest *httprest.HttpRest) (*Router, error) {
 	swagger, err := openapi.GetSwagger()
 	if err != nil {
 		return nil, err
 	}
 
-	swagger.Servers = nil
+	return &Router{
+		mux:     chi.NewRouter(),
+		swagger: swagger,
+		rest:    rest,
+	}, nil
+}
+
+func (router Router) Setup() (http.Handler, error) {
+	router.swagger.Servers = nil
 
 	router.mux.Use(middleware.Heartbeat("/health"))
 	router.mux.Use(httprate.LimitByIP(consts.HttpRateRequestLimit, consts.HttpRateWindowLength))
@@ -46,7 +49,7 @@ func (router Router) Setup() (http.Handler, error) {
 	)
 
 	router.mux.Group(func(r chi.Router) {
-		r.Use(nethttpmiddleware.OapiRequestValidatorWithOptions(swagger, nil))
+		r.Use(nethttpmiddleware.OapiRequestValidatorWithOptions(router.swagger, nil))
 		openapi.HandlerFromMux(openapi.NewStrictHandler(router.rest, nil), r)
 	})
 

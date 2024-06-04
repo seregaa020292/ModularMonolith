@@ -4,11 +4,12 @@ import (
 	"context"
 
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
+	"github.com/seregaa020292/ModularMonolith/internal/owner/repository"
 )
 
 type OwnerHandler struct{}
 
-func NewOwnerHandler() *OwnerHandler {
+func NewOwnerHandler(repo *repository.OwnerRepo) *OwnerHandler {
 	return &OwnerHandler{}
 }
 

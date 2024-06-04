@@ -13,6 +13,8 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/router"
 	"github.com/seregaa020292/ModularMonolith/internal/notification"
+	"github.com/seregaa020292/ModularMonolith/internal/owner"
+	"github.com/seregaa020292/ModularMonolith/internal/payment"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
 )
 
@@ -32,6 +34,8 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 
 		fine.ModuleSet,
 		notification.ModuleSet,
+		owner.ModuleSet,
+		payment.ModuleSet,
 
 		httprest.NewFineHandler,
 		httprest.NewNotificationHandler,
@@ -40,7 +44,7 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		httprest.NewVehicleHandler,
 		httprest.NewAdminHandler,
 		httprest.New,
-		router.NewRouter,
+		router.New,
 
 		wire.Struct(new(serviceProvider), "*"),
 	))
