@@ -40,6 +40,7 @@ func (router Router) Setup() (http.Handler, error) {
 	router.mux.Use(httprate.LimitByIP(consts.HttpRateRequestLimit, consts.HttpRateWindowLength))
 	router.mux.Use(middleware.StripSlashes)
 	router.mux.Use(middleware.RequestID)
+	router.mux.Use(NewCorrelationID)
 	router.mux.Use(middleware.RealIP)
 	router.mux.Use(middleware.Recoverer)
 	router.mux.Use(
