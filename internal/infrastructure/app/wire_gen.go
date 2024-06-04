@@ -9,6 +9,7 @@ package app
 import (
 	"context"
 	"github.com/seregaa020292/ModularMonolith/internal/config"
+	"github.com/seregaa020292/ModularMonolith/internal/fine/query"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/repository"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/logger"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
@@ -32,7 +33,8 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		return nil, nil, err
 	}
 	fineRepo := repository.NewFineRepo(db)
-	fineHandler := httprest.NewFineHandler(fineRepo)
+	getListHandler := query.NewGetList(fineRepo)
+	fineHandler := httprest.NewFineHandler(getListHandler)
 	notificationRepo := repository2.NewNotificationRepo(db)
 	notificationHandler := httprest.NewNotificationHandler(notificationRepo)
 	ownerRepo := repository3.NewOwnerRepo(db)
