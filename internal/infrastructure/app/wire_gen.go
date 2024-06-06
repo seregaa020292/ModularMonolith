@@ -11,9 +11,10 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/config"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/query"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/repository"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/response"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/router"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/logger"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/router"
 	repository2 "github.com/seregaa020292/ModularMonolith/internal/notification/repository"
 	repository3 "github.com/seregaa020292/ModularMonolith/internal/owner/repository"
 	repository4 "github.com/seregaa020292/ModularMonolith/internal/payment/repository"
@@ -51,13 +52,14 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		VehicleHandler:      vehicleHandler,
 		AdminHandler:        adminHandler,
 	}
-	routerRouter, err := router.New(httpRest)
+	app := cfg.App
+	loggerLogger := logger.New(app)
+	errorResponse := response.NewErrorResponse(loggerLogger)
+	routerRouter, err := router.New(httpRest, errorResponse)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	app := cfg.App
-	loggerLogger := logger.New(app)
 	appServiceProvider := &serviceProvider{
 		Router: routerRouter,
 		Logger: loggerLogger,

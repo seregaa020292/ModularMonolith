@@ -420,6 +420,8 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 type N201Response struct {
 }
 
+type N400ApplicationProblemPlusJSONResponse Error
+
 type ListFinesRequestObject struct {
 }
 
@@ -432,6 +434,17 @@ type ListFines200JSONResponse []Fine
 func (response ListFines200JSONResponse) VisitListFinesResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ListFines400ApplicationProblemPlusJSONResponse struct {
+	N400ApplicationProblemPlusJSONResponse
+}
+
+func (response ListFines400ApplicationProblemPlusJSONResponse) VisitListFinesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
 
 	return json.NewEncoder(w).Encode(response)
 }
@@ -449,6 +462,17 @@ type CreateFine201Response = N201Response
 func (response CreateFine201Response) VisitCreateFineResponse(w http.ResponseWriter) error {
 	w.WriteHeader(201)
 	return nil
+}
+
+type CreateFine400ApplicationProblemPlusJSONResponse struct {
+	N400ApplicationProblemPlusJSONResponse
+}
+
+func (response CreateFine400ApplicationProblemPlusJSONResponse) VisitCreateFineResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 type ListNotificationsRequestObject struct {

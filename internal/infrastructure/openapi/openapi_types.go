@@ -9,13 +9,19 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Error defines model for Error.
+type Error struct {
+	Code    int32  `json:"code"`
+	Message string `json:"message"`
+}
+
 // Fine defines model for Fine.
 type Fine struct {
 	Amount      float32             `json:"amount"`
 	CreatedAt   *time.Time          `json:"created_at,omitempty"`
 	Description *string             `json:"description,omitempty"`
 	DueDate     openapi_types.Date  `json:"due_date"`
-	Id          *openapi_types.UUID `json:"id,omitempty"`
+	Id          *openapi_types.UUID `json:"id,omitempty" validate:"required,uuid"`
 	IssueDate   openapi_types.Date  `json:"issue_date"`
 	Status      string              `json:"status"`
 	UpdatedAt   *time.Time          `json:"updated_at,omitempty"`
@@ -65,6 +71,9 @@ type Vehicle struct {
 	OwnerId      openapi_types.UUID  `json:"owner_id"`
 	UpdatedAt    *time.Time          `json:"updated_at,omitempty"`
 }
+
+// N400 defines model for 400.
+type N400 = Error
 
 // CreateFineJSONRequestBody defines body for CreateFine for application/json ContentType.
 type CreateFineJSONRequestBody = Fine

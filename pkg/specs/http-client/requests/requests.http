@@ -6,3 +6,19 @@ Content-Type: application/json
 GET {{host}}/admin
 Content-Type: application/json
 Authorization: Basic YWRtaW46YWRtaW4=
+
+#### Create fine
+POST {{host}}/fines
+Content-Type: application/json
+
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "vehicle_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "issue_date": "2024-06-05",
+  "due_date": "2024-06-05",
+  "amount": 0,
+  "status": "string",
+  "description": "string",
+  "created_at": "2024-06-05T11:13:54.401Z",
+  "updated_at": "2024-06-05T11:13:54.401Z"
+}

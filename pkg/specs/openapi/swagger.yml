@@ -90,6 +90,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Fine'
+        400:
+          $ref: '#/components/responses/400'
     post:
       tags: [ Fines ]
       summary: Создать новый штраф
@@ -103,6 +105,8 @@ paths:
       responses:
         201:
           $ref: '#/components/responses/201'
+        400:
+          $ref: '#/components/responses/400'
   /payments:
     get:
       tags: [ Payments ]
@@ -170,6 +174,12 @@ components:
       description: No Content
     301:
       description: Moved Permanently
+    400:
+      description: Bad Request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
 
   schemas:
     Owner:
@@ -232,6 +242,8 @@ components:
         id:
           type: string
           format: uuid
+          x-oapi-codegen-extra-tags:
+            validate: required,uuid
         vehicle_id:
           type: string
           format: uuid
@@ -311,3 +323,14 @@ components:
         updated_at:
           type: string
           format: date-time
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

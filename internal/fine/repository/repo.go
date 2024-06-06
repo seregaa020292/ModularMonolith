@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
+	"math/rand/v2"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/models/app/public/model"
@@ -32,5 +34,5 @@ func (r FineRepo) List(ctx context.Context) ([]*model.Fines, error) {
 			CreatedAt:   time.Now(),
 			UpdatedAt:   gog.Ptr(time.Now()),
 		},
-	}, nil
+	}, gog.If(rand.IntN(2) == 0, errors.New("some error"), nil)
 }
