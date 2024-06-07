@@ -27,9 +27,3 @@ func ListFines(fines []*model.Fines) openapi.ListFines200JSONResponse {
 
 	return response
 }
-
-func ListFines400(error openapi.Error) openapi.ListFines400ApplicationProblemPlusJSONResponse {
-	return openapi.ListFines400ApplicationProblemPlusJSONResponse{
-		N400ApplicationProblemPlusJSONResponse: openapi.N400ApplicationProblemPlusJSONResponse(error),
-	}
-}

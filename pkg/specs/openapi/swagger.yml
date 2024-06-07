@@ -26,7 +26,7 @@ paths:
     get:
       tags: [ Owners ]
       summary: Получить список всех владельцев
-      operationId: listOwners
+      operationId: ListOwners
       responses:
         200:
           description: Список владельцев
@@ -39,7 +39,7 @@ paths:
     post:
       tags: [ Owners ]
       summary: Создать нового владельца
-      operationId: createOwner
+      operationId: CreateOwner
       requestBody:
         required: true
         content:
@@ -53,7 +53,7 @@ paths:
     get:
       tags: [ Vehicles ]
       summary: Получить список всех транспортных средств
-      operationId: listVehicles
+      operationId: ListVehicles
       responses:
         200:
           description: Список транспортных средств
@@ -66,7 +66,7 @@ paths:
     post:
       tags: [ Vehicles ]
       summary: Создать новое транспортное средство
-      operationId: createVehicle
+      operationId: CreateVehicle
       requestBody:
         required: true
         content:
@@ -80,7 +80,7 @@ paths:
     get:
       tags: [ Fines ]
       summary: Получить список всех штрафов
-      operationId: listFines
+      operationId: ListFines
       responses:
         200:
           description: Список штрафов
@@ -95,7 +95,7 @@ paths:
     post:
       tags: [ Fines ]
       summary: Создать новый штраф
-      operationId: createFine
+      operationId: CreateFine
       requestBody:
         required: true
         content:
@@ -111,7 +111,7 @@ paths:
     get:
       tags: [ Payments ]
       summary: Получить список всех платежей
-      operationId: listPayments
+      operationId: ListPayments
       responses:
         200:
           description: Список платежей
@@ -124,7 +124,7 @@ paths:
     post:
       tags: [ Payments ]
       summary: Создать новый платеж
-      operationId: createPayment
+      operationId: CreatePayment
       requestBody:
         required: true
         content:
@@ -138,7 +138,7 @@ paths:
     get:
       tags: [ Notifications ]
       summary: Получить список всех уведомлений
-      operationId: listNotifications
+      operationId: ListNotifications
       responses:
         200:
           description: Список уведомлений
@@ -151,7 +151,7 @@ paths:
     post:
       tags: [ Notifications ]
       summary: Создать новое уведомление
-      operationId: createNotification
+      operationId: CreateNotification
       requestBody:
         required: true
         content:

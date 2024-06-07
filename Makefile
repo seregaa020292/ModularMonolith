@@ -72,6 +72,6 @@ env-create:
 install-deps:
 	[ -f $(LOCAL_BIN)/golangci-lint ] || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(LOCAL_BIN) v1.59.0
 	[ -f $(LOCAL_BIN)/goose ] || curl -sSfL https://raw.githubusercontent.com/pressly/goose/master/install.sh | GOOSE_INSTALL=. sh -s v3.20.0
-	[ -f $(LOCAL_BIN)/oapi-codegen ] || GOBIN=$(LOCAL_BIN) go install github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@v2.1.0
+	[ -f $(LOCAL_BIN)/oapi-codegen ] || GOBIN=$(LOCAL_BIN) go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.3.0
 	[ -f $(LOCAL_BIN)/jet ] || GOBIN=$(LOCAL_BIN) go install github.com/go-jet/jet/v2/cmd/jet@v2.11.1
 	[ -f $(LOCAL_BIN)/wire ] || GOBIN=$(LOCAL_BIN) go install github.com/google/wire/cmd/wire@v0.6.0
