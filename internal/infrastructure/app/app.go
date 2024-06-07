@@ -41,7 +41,7 @@ func (app App) Run(ctx context.Context) {
 
 	serv := &http.Server{
 		Addr:    app.cfg.App.Addr(),
-		Handler: gog.Must(provide.Router.Setup()),
+		Handler: gog.Must(provide.Router.Setup(ctx, app.cfg.App)),
 	}
 
 	provide.Logger.Info("starting server",

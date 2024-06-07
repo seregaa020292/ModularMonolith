@@ -7,13 +7,18 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	CorrelationIDHeader  = "Correlation-ID"
+	XCorrelationIDHeader = "X-Correlation-ID"
+)
+
 type correlationIDKey struct{}
 
 func CorrelationID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id := r.Header.Get("Correlation-ID")
+		id := r.Header.Get(CorrelationIDHeader)
 		if id == "" {
-			id = r.Header.Get("X-Correlation-ID")
+			id = r.Header.Get(XCorrelationIDHeader)
 		}
 		if id == "" {
 			id = uuid.NewString()
@@ -21,7 +26,7 @@ func CorrelationID(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), correlationIDKey{}, id)
 
-		w.Header().Set("Correlation-ID", id)
+		w.Header().Set(CorrelationIDHeader, id)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

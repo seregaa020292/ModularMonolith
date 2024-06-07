@@ -1,15 +1,19 @@
 package router
 
 import (
+	"context"
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/httprate"
 	nethttpmiddleware "github.com/oapi-codegen/nethttp-middleware"
 
+	"github.com/seregaa020292/ModularMonolith/internal/config"
 	"github.com/seregaa020292/ModularMonolith/internal/config/consts"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/errs"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/middleware"
@@ -39,37 +43,47 @@ func New(rest *httprest.HttpRest, errResp *response.ErrorResponse) (*Router, err
 	}, nil
 }
 
-func (router Router) Setup() (http.Handler, error) {
+func (router Router) Setup(ctx context.Context, cfg config.App) (http.Handler, error) {
 	router.swagger.Servers = nil
 	r := router.mux
 
+	r.Use(chimiddleware.Recoverer)
 	r.Use(chimiddleware.Heartbeat("/health"))
 	r.Use(httprate.LimitByIP(consts.HttpRateRequestLimit, consts.HttpRateWindowLength))
 	r.Use(chimiddleware.StripSlashes)
 	r.Use(chimiddleware.RequestID)
 	r.Use(middleware.CorrelationID)
 	r.Use(chimiddleware.RealIP)
-	r.Use(chimiddleware.Recoverer)
+	r.Use(chimiddleware.RequestLogger(middleware.NewRequestLogger()))
+	r.Use(chimiddleware.Timeout(60 * time.Second))
 	r.Use(
 		chimiddleware.SetHeader("X-Content-Type-Options", "nosniff"),
 		chimiddleware.SetHeader("X-Frame-Options", "deny"),
 		chimiddleware.SetHeader("X-Xss-Protection", "1; mode=block"),
 	)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   cfg.AllowedOrigins(),
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
 
 	r.Group(func(r chi.Router) {
 		r.Use(nethttpmiddleware.OapiRequestValidatorWithOptions(router.swagger, &nethttpmiddleware.Options{
 			ErrorHandler: func(w http.ResponseWriter, message string, statusCode int) {
-				router.errResp.Send(w,
+				router.errResp.Send(context.Background(), w,
 					errs.NewBaseError(message, errors.New(http.StatusText(statusCode)), statusCode))
 			},
 		}))
 		openapi.HandlerFromMux(openapi.NewStrictHandlerWithOptions(router.rest, nil,
 			openapi.StrictHTTPServerOptions{
 				RequestErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
-					router.errResp.Send(w, err)
+					router.errResp.Send(r.Context(), w, err)
 				},
 				ResponseErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
-					router.errResp.Send(w, err)
+					router.errResp.Send(r.Context(), w, err)
 				},
 			}), r)
 	})

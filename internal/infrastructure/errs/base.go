@@ -13,11 +13,11 @@ type (
 	}
 )
 
-func NewBaseError(msg string, err error, code int) *BaseError {
+func NewBaseError(msg string, err error, statusCode int) error {
 	return &BaseError{
 		msg:  msg,
 		err:  err,
-		code: code,
+		code: statusCode,
 	}
 }
 
