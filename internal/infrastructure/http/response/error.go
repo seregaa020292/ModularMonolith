@@ -12,15 +12,14 @@ import (
 
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/errs"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/middleware"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/logger"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
 )
 
 type ErrorResponse struct {
-	logger *logger.Logger
+	logger *slog.Logger
 }
 
-func NewErrorResponse(logger *logger.Logger) *ErrorResponse {
+func NewErrorResponse(logger *slog.Logger) *ErrorResponse {
 	return &ErrorResponse{
 		logger: logger,
 	}
@@ -29,11 +28,14 @@ func NewErrorResponse(logger *logger.Logger) *ErrorResponse {
 func (e ErrorResponse) Send(ctx context.Context, w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/problem+json")
 
+	log := e.logger.With(
+		slog.String("request_id", chimiddleware.GetReqID(ctx)),
+		slog.String("correlation_id", middleware.GetCorrelationIDResponse(w)),
+	)
+
 	var errCustom errs.ErrorCustomer
 	if errors.As(err, &errCustom) {
-		e.logger.Error(errCustom.Error(),
-			slog.String("request_id", chimiddleware.GetReqID(ctx)),
-			slog.String("correlation_id", w.Header().Get(middleware.CorrelationIDHeader)),
+		log.Error(errCustom.Error(),
 			slog.String("stack", fmt.Sprintf("%+v", errCustom.OriginalError())),
 		)
 
@@ -43,13 +45,12 @@ func (e ErrorResponse) Send(ctx context.Context, w http.ResponseWriter, err erro
 			Message: errCustom.Error(),
 		}); err != nil {
 			e.logger.Error(err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	e.logger.Error(http.StatusText(http.StatusInternalServerError),
-		slog.String("request_id", chimiddleware.GetReqID(ctx)),
-		slog.String("correlation_id", w.Header().Get(middleware.CorrelationIDHeader)),
+	log.Error(http.StatusText(http.StatusInternalServerError),
 		slog.String("stack", fmt.Sprintf("%+v", err)),
 	)
 
@@ -59,5 +60,6 @@ func (e ErrorResponse) Send(ctx context.Context, w http.ResponseWriter, err erro
 		Message: http.StatusText(http.StatusInternalServerError),
 	}); err != nil {
 		e.logger.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

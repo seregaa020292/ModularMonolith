@@ -94,8 +94,7 @@ func (router Router) Setup(ctx context.Context, cfg config.App) (http.Handler, e
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(http.StatusText(http.StatusNotFound)))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	})
 
 	return r, nil

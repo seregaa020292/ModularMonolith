@@ -41,3 +41,7 @@ func GetCorrelationID(ctx context.Context) string {
 	}
 	return ""
 }
+
+func GetCorrelationIDResponse(w http.ResponseWriter) string {
+	return w.Header().Get(CorrelationIDHeader)
+}

@@ -8,11 +8,7 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/config"
 )
 
-type Logger struct {
-	*slog.Logger
-}
-
-func New(cfg config.App) *Logger {
+func New(cfg config.App) *slog.Logger {
 	var (
 		level   slog.Level
 		handler slog.Handler
@@ -38,5 +34,5 @@ func New(cfg config.App) *Logger {
 
 	slog.SetDefault(logger)
 
-	return &Logger{Logger: logger}
+	return logger
 }
