@@ -8,16 +8,16 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql"
 	"github.com/seregaa020292/ModularMonolith/internal/models/app/public/model"
 	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
 )
 
 type FineRepo struct {
-	db *pg.DB
+	db *pgsql.DB
 }
 
-func NewFineRepo(db *pg.DB) *FineRepo {
+func NewFineRepo(db *pgsql.DB) *FineRepo {
 	return &FineRepo{db: db}
 }
 

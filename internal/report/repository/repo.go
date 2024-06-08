@@ -1,13 +1,13 @@
 package repository
 
 import (
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql"
 )
 
 type ReportRepo struct {
-	db *pg.DB
+	db *pgsql.DB
 }
 
-func NewReportRepo(db *pg.DB) *ReportRepo {
+func NewReportRepo(db *pgsql.DB) *ReportRepo {
 	return &ReportRepo{db: db}
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/response"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/router"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/logger"
-	postgres "github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql"
 	"github.com/seregaa020292/ModularMonolith/internal/notification"
 	"github.com/seregaa020292/ModularMonolith/internal/owner"
 	"github.com/seregaa020292/ModularMonolith/internal/payment"
@@ -34,7 +34,7 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		wire.FieldsOf(new(config.Config), "App", "PG"),
 
 		logger.New,
-		postgres.New,
+		pgsql.New,
 		response.NewErrorResponse,
 
 		fine.ModuleSet,

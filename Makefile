@@ -38,32 +38,32 @@ test:
 test-export:
 	docker build -f ./build/Dockerfile --target test-export -q -o ./tmp/test .
 
-migration-create:
+migrate-create:
 	$(LOCAL_BIN)/goose -dir $(MIGRATION_DIR) create $(CMD_ARGS) sql
 
-migration-status:
+migrate-status:
 	$(LOCAL_BIN)/goose -dir $(MIGRATION_DIR) postgres ${PG_DSN} status -v
 
-migration-up:
+migrate-up:
 	$(LOCAL_BIN)/goose -dir $(MIGRATION_DIR) postgres ${PG_DSN} up -v
 
-migration-down:
+migrate-down:
 	$(LOCAL_BIN)/goose -dir $(MIGRATION_DIR) postgres ${PG_DSN} down -v
 
-generate-oapi-server:
+gen-oapi-server:
 	OUTPUT_DIR=./internal/infrastructure/openapi ; \
  	SPEC_FILE=./pkg/specs/openapi/swagger.yml ; \
 	$(LOCAL_BIN)/oapi-codegen -generate chi-server,strict-server -package openapi -o $$OUTPUT_DIR/openapi_server.go $$SPEC_FILE ; \
 	$(LOCAL_BIN)/oapi-codegen -generate types -package openapi -o $$OUTPUT_DIR/openapi_types.go $$SPEC_FILE ; \
 	$(LOCAL_BIN)/oapi-codegen -generate spec -package openapi -o $$OUTPUT_DIR/openapi_spec.go $$SPEC_FILE
 
-generate-oapi-client:
+gen-oapi-client:
 	#$(LOCAL_BIN)/oapi-codegen -generate client -package openapi -o $$OUTPUT_DIR/openapi_client.go $$SPEC_FILE
 
-generate-jet:
+gen-jet:
 	$(LOCAL_BIN)/jet -source=postgres -dsn=${PG_DSN} -path=./internal/models -ignore-tables=goose_db_version
 
-generate-wire:
+gen-wire:
 	$(LOCAL_BIN)/wire ./internal/infrastructure/app
 
 env-create:

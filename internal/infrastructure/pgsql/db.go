@@ -1,4 +1,4 @@
-package pg
+package pgsql
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg/transaction"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql/transaction"
 )
 
 const (

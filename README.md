@@ -21,15 +21,15 @@ make down
 
 - После изменения swagger документации, сгенерировать rest api
 ```sh
-make generate-oapi-server
+make gen-oapi-server
 ```
 
 - После изменения базы данных, сгенерировать models
 ```sh
-make generate-jet
+make gen-jet
 ```
 
 - После изменения зависимостей в коде, сгенерировать di
 ```sh
-make generate-wire
+make gen-wire
 ```

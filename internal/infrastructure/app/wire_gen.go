@@ -14,7 +14,7 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/response"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/router"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/logger"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pg"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql"
 	repository2 "github.com/seregaa020292/ModularMonolith/internal/notification/repository"
 	repository3 "github.com/seregaa020292/ModularMonolith/internal/owner/repository"
 	repository4 "github.com/seregaa020292/ModularMonolith/internal/payment/repository"
@@ -28,8 +28,8 @@ import (
 // В качестве параметров принимает контекст выполнения ctx и конфигурацию cfg.
 // Возвращает указатель на serviceProvider, функцию для очистки и ошибку, если таковая возникнет.
 func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvider, func(), error) {
-	configPG := cfg.PG
-	db, cleanup, err := pg.New(configPG)
+	pg := cfg.PG
+	db, cleanup, err := pgsql.New(pg)
 	if err != nil {
 		return nil, nil, err
 	}
