@@ -3,6 +3,7 @@ package router
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -27,9 +28,10 @@ type Router struct {
 	swagger *openapi3.T
 	rest    *httprest.HttpRest
 	errResp *response.ErrorResponse
+	logger  *slog.Logger
 }
 
-func New(rest *httprest.HttpRest, errResp *response.ErrorResponse) (*Router, error) {
+func New(rest *httprest.HttpRest, errResp *response.ErrorResponse, logger *slog.Logger) (*Router, error) {
 	swagger, err := openapi.GetSwagger()
 	if err != nil {
 		return nil, err
@@ -40,6 +42,7 @@ func New(rest *httprest.HttpRest, errResp *response.ErrorResponse) (*Router, err
 		swagger: swagger,
 		rest:    rest,
 		errResp: errResp,
+		logger:  logger,
 	}, nil
 }
 
@@ -55,7 +58,7 @@ func (router Router) Setup(ctx context.Context, cfg config.App) (http.Handler, e
 	r.Use(chimiddleware.RequestID)
 	r.Use(middleware.CorrelationID)
 	r.Use(chimiddleware.RealIP)
-	r.Use(chimiddleware.RequestLogger(middleware.NewRequestLogger()))
+	r.Use(chimiddleware.RequestLogger(middleware.NewRequestLogger(router.logger)))
 	r.Use(
 		chimiddleware.SetHeader("X-Content-Type-Options", "nosniff"),
 		chimiddleware.SetHeader("X-Frame-Options", "deny"),

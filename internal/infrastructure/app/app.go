@@ -44,7 +44,7 @@ func (app App) Run(ctx context.Context) {
 		Handler: gog.Must(provide.Router.Setup(ctx, app.cfg.App)),
 	}
 
-	provide.Logger.Info("starting server",
+	provide.Logger.Info("Starting server",
 		slog.String("app", app.cfg.App.Name),
 		slog.String("addr", serv.Addr),
 	)

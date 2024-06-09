@@ -53,10 +53,10 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		VehicleHandler:      vehicleHandler,
 		AdminHandler:        adminHandler,
 	}
+	errorResponse := response.NewErrorResponse()
 	app := cfg.App
 	slogLogger := logger.New(app)
-	errorResponse := response.NewErrorResponse(slogLogger)
-	routerRouter, err := router.New(httpRest, errorResponse)
+	routerRouter, err := router.New(httpRest, errorResponse, slogLogger)
 	if err != nil {
 		cleanup()
 		return nil, nil, err

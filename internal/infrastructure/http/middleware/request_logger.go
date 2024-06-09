@@ -13,8 +13,10 @@ import (
 )
 
 type (
-	RequestLogger struct{}
-	entryLogger   struct {
+	RequestLogger struct {
+		logger *slog.Logger
+	}
+	entryLogger struct {
 		req    *http.Request
 		logger *slog.Logger
 	}
@@ -27,14 +29,16 @@ func GetEntryLogger(ctx context.Context) *slog.Logger {
 	return slog.Default()
 }
 
-func NewRequestLogger() *RequestLogger {
-	return &RequestLogger{}
+func NewRequestLogger(logger *slog.Logger) *RequestLogger {
+	return &RequestLogger{
+		logger: logger,
+	}
 }
 
 func (l RequestLogger) NewLogEntry(r *http.Request) chimiddleware.LogEntry {
 	return &entryLogger{
 		req: r,
-		logger: slog.With(
+		logger: l.logger.With(
 			slog.String("request_id", chimiddleware.GetReqID(r.Context())),
 			slog.String("correlation_id", GetCorrelationID(r.Context())),
 		),
