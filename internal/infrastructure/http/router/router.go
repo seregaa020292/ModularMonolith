@@ -76,7 +76,7 @@ func (router Router) Setup(ctx context.Context, cfg config.App) (http.Handler, e
 	r.Group(func(r chi.Router) {
 		r.Use(nethttpmiddleware.OapiRequestValidatorWithOptions(router.swagger, &nethttpmiddleware.Options{
 			ErrorHandler: func(w http.ResponseWriter, message string, statusCode int) {
-				router.errResp.Send(context.Background(), w,
+				router.errResp.Send(middleware.GetEntryLoggerCtx(w), w,
 					errs.NewBaseError(message, errors.New(http.StatusText(statusCode)), statusCode))
 			},
 		}))
