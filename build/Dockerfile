@@ -48,7 +48,7 @@ RUN --mount=type=cache,target=${GOMODCACHE} \
 # STAGE: DEVELOPMENT FROM ENV
 #-------------------------------------------------------------------------------
 FROM base AS development
-ARG AIR_VERSION=1.52.0
+ARG AIR_VERSION=1.52.2
 RUN --mount=type=cache,target=${GOMODCACHE} \
     go install github.com/air-verse/air@v${AIR_VERSION}
 ENV CGO_ENABLED=$TARGET_CGO_ENABLED \
