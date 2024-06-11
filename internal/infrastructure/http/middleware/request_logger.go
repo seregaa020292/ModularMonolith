@@ -68,6 +68,8 @@ func (l entryLogger) Write(status, bytes int, header http.Header, elapsed time.D
 		slog.Int("status", status),
 		slog.Any("body", l.body),
 		slog.String("user_agent", l.req.UserAgent()),
+		slog.String("remote_addr", l.req.RemoteAddr),
+		slog.String("referer", l.req.Referer()),
 		slog.Float64("elapsed", float64(elapsed.Nanoseconds())/1000000.0),
 		slog.Int("bytes", bytes),
 	)
