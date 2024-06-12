@@ -26,12 +26,12 @@ import (
 type Router struct {
 	mux     chi.Router
 	swagger *openapi3.T
-	rest    *httprest.HttpRest
-	errResp *response.ErrorResponse
+	rest    *httprest.ServerHandler
+	errResp *response.ErrorHandle
 	logger  *slog.Logger
 }
 
-func New(rest *httprest.HttpRest, errResp *response.ErrorResponse, logger *slog.Logger) (*Router, error) {
+func New(rest *httprest.ServerHandler, errResp *response.ErrorHandle, logger *slog.Logger) (*Router, error) {
 	swagger, err := openapi.GetSwagger()
 	if err != nil {
 		return nil, err

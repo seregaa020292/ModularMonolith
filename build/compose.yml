@@ -47,6 +47,12 @@ services:
       - type: volume
         source: app-pg_volume
         target: /var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready -d ${PG_DB} -U ${PG_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: on-failure
 
 volumes:
   app-pg_volume:

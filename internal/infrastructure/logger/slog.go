@@ -8,15 +8,11 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
+	"github.com/seregaa020292/ModularMonolith/pkg/prettylog"
 )
 
-func New(cfg config.App) *slog.Logger {
-	var (
-		level   slog.Level
-		handler slog.Handler
-		writer  = io.MultiWriter(os.Stdout)
-	)
-
+func NewSlog(cfg config.App) *slog.Logger {
+	var level slog.Level
 	if err := level.UnmarshalText([]byte(cfg.LogLevel)); err != nil {
 		level = slog.LevelInfo
 	}
@@ -26,15 +22,18 @@ func New(cfg config.App) *slog.Logger {
 		ReplaceAttr: replaceAttr,
 	}
 
+	var handler slog.Handler
+	writer := io.MultiWriter(os.Stdout)
 	switch cfg.LogFormatter {
 	case "json":
 		handler = slog.NewJSONHandler(writer, opts)
+	case "pretty":
+		handler = prettylog.New(writer, opts)
 	default:
 		handler = slog.NewTextHandler(writer, opts)
 	}
 
 	logger := slog.New(handler)
-
 	slog.SetDefault(logger)
 
 	return logger

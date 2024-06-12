@@ -4,9 +4,9 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
 )
 
-var _ openapi.StrictServerInterface = (*HttpRest)(nil)
+var _ openapi.StrictServerInterface = (*ServerHandler)(nil)
 
-type HttpRest struct {
+type ServerHandler struct {
 	*FineHandler
 	*NotificationHandler
 	*OwnerHandler

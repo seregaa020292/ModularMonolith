@@ -34,9 +34,9 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 	panic(wire.Build(
 		wire.FieldsOf(new(config.Config), "App", "PG"),
 
-		logger.New,
 		pgsql.New,
-		response.NewErrorResponse,
+		logger.NewSlog,
+		response.NewErrorHandle,
 
 		fine.ModuleSet,
 		notification.ModuleSet,
@@ -49,7 +49,7 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		httprest.NewPaymentHandler,
 		httprest.NewVehicleHandler,
 		httprest.NewAdminHandler,
-		wire.Struct(new(httprest.HttpRest), "*"),
+		wire.Struct(new(httprest.ServerHandler), "*"),
 		router.New,
 
 		wire.Struct(new(serviceProvider), "*"),

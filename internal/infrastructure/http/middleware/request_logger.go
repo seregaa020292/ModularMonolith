@@ -21,11 +21,18 @@ type (
 		logger *slog.Logger
 	}
 	entryLogger struct {
+		*RequestLogger
 		logger *slog.Logger
 		req    *http.Request
 		body   map[string]any
 	}
 )
+
+func NewRequestLogger(logger *slog.Logger) *RequestLogger {
+	return &RequestLogger{
+		logger: logger,
+	}
+}
 
 func GetEntryLogger(ctx context.Context) *slog.Logger {
 	if entry, ok := ctx.Value(chimiddleware.LogEntryCtxKey).(*entryLogger); ok {
@@ -43,14 +50,9 @@ func SetEntryLoggerCtxFromWriter(w http.ResponseWriter) context.Context {
 	)
 }
 
-func NewRequestLogger(logger *slog.Logger) *RequestLogger {
-	return &RequestLogger{
-		logger: logger,
-	}
-}
-
-func (l RequestLogger) NewLogEntry(r *http.Request) chimiddleware.LogEntry {
+func (l *RequestLogger) NewLogEntry(r *http.Request) chimiddleware.LogEntry {
 	return &entryLogger{
+		RequestLogger: l,
 		logger: l.logger.With(
 			slog.String("request_id", chimiddleware.GetReqID(r.Context())),
 			slog.String("correlation_id", GetCorrelationID(r.Context())),
@@ -60,7 +62,7 @@ func (l RequestLogger) NewLogEntry(r *http.Request) chimiddleware.LogEntry {
 	}
 }
 
-func (l entryLogger) Write(status, bytes int, header http.Header, elapsed time.Duration, extra any) {
+func (l *entryLogger) Write(status, bytes int, header http.Header, elapsed time.Duration, extra any) {
 	log := l.logger.With(
 		slog.String("url", fmt.Sprintf("%s://%s%s %s",
 			gog.If(l.req.TLS != nil, "https", "http"), l.req.Host, l.req.RequestURI, l.req.Proto)),
@@ -84,7 +86,7 @@ func (l entryLogger) Write(status, bytes int, header http.Header, elapsed time.D
 	}
 }
 
-func (l entryLogger) Panic(v any, stack []byte) {
+func (l *entryLogger) Panic(v any, stack []byte) {
 	l.logger.Error("HTTP Handler Panic",
 		slog.String("stack", string(stack)),
 		slog.String("panic", fmt.Sprintf("%+v", v)),

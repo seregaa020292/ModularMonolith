@@ -11,22 +11,24 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/errs"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/middleware"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
+	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
 )
 
-type ErrorResponse struct{}
+type ErrorHandle struct{}
 
-func NewErrorResponse() *ErrorResponse {
-	return &ErrorResponse{}
+func NewErrorHandle() *ErrorHandle {
+	return &ErrorHandle{}
 }
 
-func (e ErrorResponse) Send(ctx context.Context, w http.ResponseWriter, err error) {
+func (e ErrorHandle) Send(ctx context.Context, w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/problem+json")
 
 	logger := middleware.GetEntryLogger(ctx)
 
 	var errCustom errs.ErrorCustomer
 	if errors.As(err, &errCustom) {
-		logger.Error(errCustom.Error(), slog.Any("error", errCustom.OriginalError()))
+		lvlLogger := gog.If(errCustom.StatusCode() >= 500, logger.Error, logger.Warn)
+		lvlLogger(errCustom.Error(), slog.Any("error", errCustom.OriginalError()))
 
 		w.WriteHeader(errCustom.StatusCode())
 		if err := json.NewEncoder(w).Encode(openapi.Error{
