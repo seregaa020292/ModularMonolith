@@ -3,20 +3,20 @@ package sensitive
 import "encoding/json"
 
 type Map struct {
-	data   map[string]any
-	filers []string
-	mask   string
+	Data   map[string]any
+	Filers []string
+	Mask   string
 }
 
 func MapUnmarshal(bytes []byte, mask string, filters []string) (map[string]any, error) {
 	m := Map{
-		mask:   mask,
-		filers: filters,
+		Mask:   mask,
+		Filers: filters,
 	}
 	if err := json.Unmarshal(bytes, &m); err != nil {
 		return nil, err
 	}
-	return m.data, nil
+	return m.Data, nil
 }
 
 func (m *Map) UnmarshalJSON(bytes []byte) error {
@@ -25,13 +25,13 @@ func (m *Map) UnmarshalJSON(bytes []byte) error {
 		return err
 	}
 
-	for _, key := range m.filers {
+	for _, key := range m.Filers {
 		if _, ok := temp[key]; ok {
-			temp[key] = m.mask
+			temp[key] = m.Mask
 		}
 	}
 
-	m.data = temp
+	m.Data = temp
 
 	return nil
 }
