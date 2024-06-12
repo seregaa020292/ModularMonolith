@@ -11,5 +11,5 @@ const (
 
 var (
 	SensitiveDataMask  = "*****"
-	SensitiveFilerKeys = []string{"password"}
+	SensitiveFilerKeys = []string{"password", "secret"}
 )

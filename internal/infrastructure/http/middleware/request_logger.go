@@ -3,7 +3,6 @@ package middleware
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
@@ -14,6 +13,7 @@ import (
 
 	"github.com/seregaa020292/ModularMonolith/internal/config/consts"
 	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
+	"github.com/seregaa020292/ModularMonolith/pkg/utils/sensitive"
 )
 
 type (
@@ -94,6 +94,10 @@ func (l entryLogger) Panic(v any, stack []byte) {
 // sanitizeRequestBody читает и санитизирует тело запроса, удаляя конфиденциальные данные.
 // Возвращает карту с данными.
 func sanitizeRequestBody(r *http.Request, mask string, filerKeys []string) map[string]any {
+	if r.Body == nil {
+		return nil
+	}
+
 	defer r.Body.Close()
 	bodyBytes, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -102,15 +106,9 @@ func sanitizeRequestBody(r *http.Request, mask string, filerKeys []string) map[s
 
 	r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
-	var body map[string]any
-	if err := json.Unmarshal(bodyBytes, &body); err != nil {
+	body, err := sensitive.MapUnmarshal(bodyBytes, mask, filerKeys)
+	if err != nil {
 		return nil
-	}
-
-	for _, key := range filerKeys {
-		if _, ok := body[key]; ok {
-			body[key] = mask
-		}
 	}
 
 	return body
