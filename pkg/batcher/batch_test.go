@@ -54,10 +54,16 @@ func TestBatchProcessor_Run(t *testing.T) {
 			batchProcessor := NewBatchProcessor(tt.batchSize, 0*time.Second, processFunc)
 
 			err := batchProcessor.Run(tt.data)
-			if tt.expectError && err == nil {
-				t.Errorf("%s: expected an error, but got nil", tt.name)
-			} else if !tt.expectError && err != nil {
-				t.Errorf("%s: unexpected error: %v", tt.name, err)
+
+			switch tt.expectError {
+			case true:
+				if err == nil {
+					t.Errorf("%s: expected an error, but got nil", tt.name)
+				}
+			case false:
+				if err != nil {
+					t.Errorf("%s: unexpected error: %v", tt.name, err)
+				}
 			}
 
 			if !reflect.DeepEqual(processedBatches, tt.expectedBatches) {
