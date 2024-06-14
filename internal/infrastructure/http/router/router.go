@@ -80,7 +80,7 @@ func (router Router) Setup(ctx context.Context, cfg config.App) (http.Handler, e
 					errs.NewBaseError(message, errors.New(http.StatusText(statusCode)), statusCode))
 			},
 		}))
-		openapi.HandlerFromMux(openapi.NewStrictHandlerWithOptions(router.rest, nil,
+		openapi.HandlerFromMux(openapi.NewStrictHandlerWithOptions(router.rest.Openapi, nil,
 			openapi.StrictHTTPServerOptions{
 				RequestErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
 					router.errResp.Send(r.Context(), w, err)
@@ -93,7 +93,7 @@ func (router Router) Setup(ctx context.Context, cfg config.App) (http.Handler, e
 
 	r.Route("/admin", func(r chi.Router) {
 		r.Use(chimiddleware.BasicAuth("Admin Panel", map[string]string{"admin": "admin"}))
-		r.Get("/", router.rest.AdminHandler.Home)
+		r.Get("/", router.rest.App.AdminHandler.Home)
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {

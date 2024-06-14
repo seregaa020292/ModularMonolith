@@ -44,14 +44,20 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 	paymentRepo := repository4.NewPaymentRepo(db)
 	paymentHandler := httprest.NewPaymentHandler(paymentRepo)
 	vehicleHandler := httprest.NewVehicleHandler()
-	adminHandler := httprest.NewAdminHandler()
-	serverHandler := &httprest.ServerHandler{
+	openapiHandler := httprest.OpenapiHandler{
 		FineHandler:         fineHandler,
 		NotificationHandler: notificationHandler,
 		OwnerHandler:        ownerHandler,
 		PaymentHandler:      paymentHandler,
 		VehicleHandler:      vehicleHandler,
-		AdminHandler:        adminHandler,
+	}
+	adminHandler := httprest.NewAdminHandler()
+	appHandler := httprest.AppHandler{
+		AdminHandler: adminHandler,
+	}
+	serverHandler := &httprest.ServerHandler{
+		Openapi: openapiHandler,
+		App:     appHandler,
 	}
 	errorHandle := response.NewErrorHandle()
 	app := cfg.App
