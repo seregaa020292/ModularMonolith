@@ -46,7 +46,7 @@ func New(rest *httprest.ServerHandler, errResp *response.ErrorHandle, logger *sl
 	}, nil
 }
 
-func (router Router) Setup(ctx context.Context, cfg config.App) (http.Handler, error) {
+func (router Router) Setup(ctx context.Context, cfg config.App) http.Handler {
 	router.swagger.Servers = nil
 	r := router.mux
 
@@ -100,5 +100,5 @@ func (router Router) Setup(ctx context.Context, cfg config.App) (http.Handler, e
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	})
 
-	return r, nil
+	return r
 }

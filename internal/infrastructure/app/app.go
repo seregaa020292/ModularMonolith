@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"os"
 	"syscall"
+	"time"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
 	"github.com/seregaa020292/ModularMonolith/pkg/closer"
-	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
 )
 
 type App struct {
@@ -40,8 +40,12 @@ func (app App) Run(ctx context.Context) {
 	app.addCloser(clean)
 
 	serv := &http.Server{
-		Addr:    app.cfg.App.Addr(),
-		Handler: gog.Must(provide.Router.Setup(ctx, app.cfg.App)),
+		ReadTimeout:       5 * time.Second,
+		ReadHeaderTimeout: 2 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		IdleTimeout:       120 * time.Second,
+		Addr:              app.cfg.App.Addr(),
+		Handler:           provide.Router.Setup(ctx, app.cfg.App),
 	}
 
 	provide.Logger.Info("Starting server",
