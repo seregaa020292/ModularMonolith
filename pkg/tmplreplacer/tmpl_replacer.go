@@ -8,6 +8,7 @@ import (
 var (
 	tmplRe  = regexp.MustCompile(`\${[^{}]*}`)
 	spaceRe = regexp.MustCompile(`\s{2,}`)
+	punctRe = regexp.MustCompile(`\s+([,.;:!?])`)
 )
 
 // TmplReplacer замена шаблонных переменных.
@@ -22,9 +23,11 @@ func New(src string) TmplReplacer {
 }
 
 func (tr TmplReplacer) Replace(varTable map[string]string) string {
-	tmpl := strings.TrimSpace(tmplRe.ReplaceAllStringFunc(tr.src, func(match string) string {
+	tmpl := tmplRe.ReplaceAllStringFunc(tr.src, func(match string) string {
 		varName := match[2 : len(match)-1]
 		return varTable[varName]
-	}))
-	return spaceRe.ReplaceAllString(tmpl, " ")
+	})
+	tmpl = strings.TrimSpace(tmpl)
+	tmpl = spaceRe.ReplaceAllString(tmpl, " ")
+	return punctRe.ReplaceAllString(tmpl, "$1")
 }
