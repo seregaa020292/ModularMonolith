@@ -15,7 +15,6 @@ import (
 	nethttpmiddleware "github.com/oapi-codegen/nethttp-middleware"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
-	"github.com/seregaa020292/ModularMonolith/internal/config/consts"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/errs"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/middleware"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/response"
@@ -51,7 +50,7 @@ func (router Router) Setup(ctx context.Context, cfg config.App) http.Handler {
 	r := router.mux
 
 	r.Use(chimiddleware.Heartbeat("/health"))
-	r.Use(httprate.LimitByIP(consts.HttpRateRequestLimit, consts.HttpRateWindowLength))
+	r.Use(httprate.LimitByIP(100, 1*time.Minute))
 	r.Use(chimiddleware.Timeout(60 * time.Second))
 	r.Use(chimiddleware.Recoverer)
 	r.Use(chimiddleware.StripSlashes)
