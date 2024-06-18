@@ -44,6 +44,13 @@ func TestBatchProcessor_Run(t *testing.T) {
 			expectedBatches: [][]int{{1, 2, 3}, {4, 5, 6}},
 			expectError:     true,
 		},
+		{
+			name:            "Max batch size",
+			data:            []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+			batchSize:       12,
+			expectedBatches: [][]int{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}},
+			expectError:     false,
+		},
 	}
 
 	for _, tt := range tests {

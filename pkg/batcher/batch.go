@@ -30,7 +30,7 @@ func (bp *BatchProcessor[T]) Run(data []T) error {
 			end = len(data)
 		}
 
-		batch := data[i:end]
+		batch := data[i:end:end]
 		err := bp.Process(batch)
 		if err != nil {
 			return fmt.Errorf("ошибка при обработке батча: %w", err)
