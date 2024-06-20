@@ -31,12 +31,13 @@ func New(cfg config.Config) *App {
 }
 
 func (app App) Run(ctx context.Context) {
-	provide, clean, err := NewServiceProvider(ctx, app.cfg)
+	defer app.gracefulStop()
+
+	sp, clean, err := NewServiceProvider(ctx, app.cfg)
 	if err != nil {
 		panic(err)
 	}
 
-	defer app.gracefulStop()
 	app.addCloser(clean)
 
 	serv := &http.Server{
@@ -45,15 +46,15 @@ func (app App) Run(ctx context.Context) {
 		WriteTimeout:      10 * time.Second,
 		IdleTimeout:       120 * time.Second,
 		Addr:              app.cfg.App.Addr(),
-		Handler:           provide.Router.Setup(app.cfg.App),
+		Handler:           sp.Router.Setup(app.cfg.App),
 	}
 
-	provide.Logger.Info("Starting server",
+	sp.Logger.Info("Starting server",
 		slog.String("app", app.cfg.App.Name),
 		slog.String("addr", serv.Addr),
 	)
 	if err := serv.ListenAndServe(); err != nil {
-		panic(err)
+		sp.Logger.Error(err.Error())
 	}
 }
 

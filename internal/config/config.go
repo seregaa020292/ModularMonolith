@@ -20,3 +20,11 @@ func New() (Config, error) {
 	}
 	return cfg, nil
 }
+
+func MustNew() Config {
+	cfg, err := New()
+	if err != nil {
+		panic(err)
+	}
+	return cfg
+}
