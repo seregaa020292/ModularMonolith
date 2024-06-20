@@ -47,15 +47,7 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		payment.ModuleSet,
 
 		// HTTP-обработчики
-		httprest.NewFineHandler,
-		httprest.NewNotificationHandler,
-		httprest.NewOwnerHandler,
-		httprest.NewPaymentHandler,
-		httprest.NewVehicleHandler,
-		httprest.NewAdminHandler,
-		wire.Struct(new(httprest.OpenapiHandler), "*"),
-		wire.Struct(new(httprest.AppHandler), "*"),
-		wire.Struct(new(httprest.ServerHandler), "*"),
+		httprest.ModuleSet,
 		router.New,
 
 		// Агрегатор всех сервисов и компонентов

@@ -44,7 +44,7 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 	paymentRepo := repository4.NewPaymentRepo(db)
 	paymentHandler := httprest.NewPaymentHandler(paymentRepo)
 	vehicleHandler := httprest.NewVehicleHandler()
-	openapiHandler := httprest.OpenapiHandler{
+	openApiHandler := &httprest.OpenApiHandler{
 		FineHandler:         fineHandler,
 		NotificationHandler: notificationHandler,
 		OwnerHandler:        ownerHandler,
@@ -52,17 +52,13 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		VehicleHandler:      vehicleHandler,
 	}
 	adminHandler := httprest.NewAdminHandler()
-	appHandler := httprest.AppHandler{
+	appApiHandler := &httprest.AppApiHandler{
 		AdminHandler: adminHandler,
-	}
-	serverHandler := &httprest.ServerHandler{
-		Openapi: openapiHandler,
-		App:     appHandler,
 	}
 	errorHandle := response.NewErrorHandle()
 	app := cfg.App
 	slogLogger := logger.NewSlog(app)
-	routerRouter, err := router.New(serverHandler, errorHandle, slogLogger)
+	routerRouter, err := router.New(openApiHandler, appApiHandler, errorHandle, slogLogger)
 	if err != nil {
 		cleanup()
 		return nil, nil, err

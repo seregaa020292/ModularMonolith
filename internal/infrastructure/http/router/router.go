@@ -23,12 +23,18 @@ import (
 
 type Router struct {
 	swagger *openapi3.T
-	rest    *httprest.ServerHandler
+	openapi *httprest.OpenApiHandler
+	appapi  *httprest.AppApiHandler
 	errResp *response.ErrorHandle
 	logger  *slog.Logger
 }
 
-func New(rest *httprest.ServerHandler, errResp *response.ErrorHandle, logger *slog.Logger) (*Router, error) {
+func New(
+	oapi *httprest.OpenApiHandler,
+	appapi *httprest.AppApiHandler,
+	errResp *response.ErrorHandle,
+	logger *slog.Logger,
+) (*Router, error) {
 	swagger, err := openapi.GetSwagger()
 	if err != nil {
 		return nil, err
@@ -36,7 +42,8 @@ func New(rest *httprest.ServerHandler, errResp *response.ErrorHandle, logger *sl
 
 	return &Router{
 		swagger: swagger,
-		rest:    rest,
+		openapi: oapi,
+		appapi:  appapi,
 		errResp: errResp,
 		logger:  logger,
 	}, nil
@@ -71,7 +78,7 @@ func (router Router) Setup(cfg config.App) http.Handler {
 	router.swagger.Servers = nil
 
 	openapi.HandlerWithOptions(
-		openapi.NewStrictHandlerWithOptions(router.rest.Openapi, nil, openapi.StrictHTTPServerOptions{
+		openapi.NewStrictHandlerWithOptions(router.openapi, nil, openapi.StrictHTTPServerOptions{
 			RequestErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
 				router.errResp.Send(r.Context(), w, err)
 			},
@@ -96,7 +103,7 @@ func (router Router) Setup(cfg config.App) http.Handler {
 
 	r.Route("/admin", func(r chi.Router) {
 		r.Use(chimiddleware.BasicAuth("Admin Panel", map[string]string{"admin": "admin"}))
-		r.Get("/", router.rest.App.AdminHandler.Home)
+		r.Get("/", router.appapi.AdminHandler.Home)
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {

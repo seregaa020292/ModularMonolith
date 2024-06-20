@@ -1,12 +1,26 @@
 package httprest
 
 import (
+	"github.com/google/wire"
+
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
 )
 
-var _ openapi.StrictServerInterface = (*OpenapiHandler)(nil)
+var _ openapi.StrictServerInterface = (*OpenApiHandler)(nil)
 
-type OpenapiHandler struct {
+var ModuleSet = wire.NewSet(
+	NewFineHandler,
+	NewNotificationHandler,
+	NewOwnerHandler,
+	NewPaymentHandler,
+	NewVehicleHandler,
+	wire.Struct(new(OpenApiHandler), "*"),
+
+	NewAdminHandler,
+	wire.Struct(new(AppApiHandler), "*"),
+)
+
+type OpenApiHandler struct {
 	*FineHandler
 	*NotificationHandler
 	*OwnerHandler
@@ -14,11 +28,6 @@ type OpenapiHandler struct {
 	*VehicleHandler
 }
 
-type AppHandler struct {
+type AppApiHandler struct {
 	*AdminHandler
-}
-
-type ServerHandler struct {
-	Openapi OpenapiHandler
-	App     AppHandler
 }
