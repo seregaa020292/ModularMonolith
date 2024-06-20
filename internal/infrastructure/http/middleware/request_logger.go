@@ -41,7 +41,7 @@ func GetEntryLogger(ctx context.Context) *slog.Logger {
 	return slog.Default()
 }
 
-func SetEntryLoggerCtxFromWriter(w http.ResponseWriter) context.Context {
+func WrapCtxLogger(w http.ResponseWriter) context.Context {
 	return context.WithValue(context.Background(),
 		chimiddleware.LogEntryCtxKey,
 		&entryLogger{
