@@ -22,7 +22,6 @@ import (
 )
 
 type Router struct {
-	mux     chi.Router
 	swagger *openapi3.T
 	rest    *httprest.ServerHandler
 	errResp *response.ErrorHandle
@@ -36,7 +35,6 @@ func New(rest *httprest.ServerHandler, errResp *response.ErrorHandle, logger *sl
 	}
 
 	return &Router{
-		mux:     chi.NewRouter(),
 		swagger: swagger,
 		rest:    rest,
 		errResp: errResp,
@@ -45,8 +43,7 @@ func New(rest *httprest.ServerHandler, errResp *response.ErrorHandle, logger *sl
 }
 
 func (router Router) Setup(cfg config.App) http.Handler {
-	router.swagger.Servers = nil
-	r := router.mux
+	r := chi.NewRouter()
 
 	r.Use(chimiddleware.Heartbeat("/health"))
 	r.Use(httprate.LimitByIP(100, 1*time.Minute))
@@ -71,6 +68,8 @@ func (router Router) Setup(cfg config.App) http.Handler {
 	}))
 
 	// Внедрение схемы OpenAPI.
+	router.swagger.Servers = nil
+
 	openapi.HandlerWithOptions(
 		openapi.NewStrictHandlerWithOptions(router.rest.Openapi, nil, openapi.StrictHTTPServerOptions{
 			RequestErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
