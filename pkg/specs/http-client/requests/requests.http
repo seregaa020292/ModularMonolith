@@ -14,7 +14,7 @@ Content-Type: application/json
 {
   "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
   "vehicle_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "issue_date": "2024-06-05",
+  "issue_date": "2024-06-0",
   "due_date": "2024-06-05",
   "amount": 0,
   "status": "string",

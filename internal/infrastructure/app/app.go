@@ -45,7 +45,7 @@ func (app App) Run(ctx context.Context) {
 		WriteTimeout:      10 * time.Second,
 		IdleTimeout:       120 * time.Second,
 		Addr:              app.cfg.App.Addr(),
-		Handler:           provide.Router.Setup(ctx, app.cfg.App),
+		Handler:           provide.Router.Setup(app.cfg.App),
 	}
 
 	provide.Logger.Info("Starting server",

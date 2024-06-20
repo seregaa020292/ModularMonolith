@@ -1,7 +1,6 @@
 package router
 
 import (
-	"context"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -45,7 +44,7 @@ func New(rest *httprest.ServerHandler, errResp *response.ErrorHandle, logger *sl
 	}, nil
 }
 
-func (router Router) Setup(ctx context.Context, cfg config.App) http.Handler {
+func (router Router) Setup(cfg config.App) http.Handler {
 	router.swagger.Servers = nil
 	r := router.mux
 
@@ -65,30 +64,36 @@ func (router Router) Setup(ctx context.Context, cfg config.App) http.Handler {
 	)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   cfg.AllowedOrigins(),
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
-		ExposedHeaders:   []string{"Link"},
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
+		AllowedHeaders:   []string{"*"},
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
 
-	r.Group(func(r chi.Router) {
-		r.Use(nethttpmiddleware.OapiRequestValidatorWithOptions(router.swagger, &nethttpmiddleware.Options{
-			ErrorHandler: func(w http.ResponseWriter, message string, statusCode int) {
-				router.errResp.Send(middleware.SetEntryLoggerCtxFromWriter(w), w,
-					errs.NewBaseError(message, errors.New(http.StatusText(statusCode)), statusCode))
+	// Внедрение схемы OpenAPI.
+	openapi.HandlerWithOptions(
+		openapi.NewStrictHandlerWithOptions(router.rest.Openapi, nil, openapi.StrictHTTPServerOptions{
+			RequestErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
+				router.errResp.Send(r.Context(), w, err)
 			},
-		}))
-		openapi.HandlerFromMux(openapi.NewStrictHandlerWithOptions(router.rest.Openapi, nil,
-			openapi.StrictHTTPServerOptions{
-				RequestErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
-					router.errResp.Send(r.Context(), w, err)
-				},
-				ResponseErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
-					router.errResp.Send(r.Context(), w, err)
-				},
-			}), r)
-	})
+			ResponseErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
+				router.errResp.Send(r.Context(), w, err)
+			},
+		}),
+		openapi.ChiServerOptions{
+			BaseRouter: r,
+			Middlewares: []openapi.MiddlewareFunc{
+				nethttpmiddleware.OapiRequestValidatorWithOptions(router.swagger, &nethttpmiddleware.Options{
+					ErrorHandler: func(w http.ResponseWriter, message string, statusCode int) {
+						err := errs.NewBaseError(message, errors.New(http.StatusText(statusCode)), statusCode)
+						router.errResp.Send(middleware.SetEntryLoggerCtxFromWriter(w), w, err)
+					},
+				}),
+			},
+			ErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
+				router.errResp.Send(r.Context(), w, err)
+			},
+		})
 
 	r.Route("/admin", func(r chi.Router) {
 		r.Use(chimiddleware.BasicAuth("Admin Panel", map[string]string{"admin": "admin"}))
@@ -96,7 +101,7 @@ func (router Router) Setup(ctx context.Context, cfg config.App) http.Handler {
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		router.errResp.Send(r.Context(), w, errs.NewNotFoundError(nil))
 	})
 
 	return r

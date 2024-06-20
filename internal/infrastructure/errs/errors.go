@@ -17,6 +17,10 @@ type (
 	SystemError struct {
 		BaseError
 	}
+	// NotFoundError описывает пользовательские ошибки 404
+	NotFoundError struct {
+		BaseError
+	}
 )
 
 func NewValidationError(msg string, err error) error {
@@ -45,6 +49,16 @@ func NewSystemError(msg string, err error) error {
 			msg:  msg,
 			err:  err,
 			code: http.StatusInternalServerError,
+		},
+	}
+}
+
+func NewNotFoundError(err error) error {
+	return &NotFoundError{
+		BaseError{
+			msg:  http.StatusText(http.StatusNotFound),
+			err:  err,
+			code: http.StatusNotFound,
 		},
 	}
 }
