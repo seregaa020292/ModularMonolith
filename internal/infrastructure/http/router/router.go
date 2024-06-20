@@ -16,7 +16,7 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/config"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/errs"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/middleware"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/response"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/respond"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
 )
@@ -25,14 +25,14 @@ type Router struct {
 	swagger *openapi3.T
 	openapi *httprest.OpenApiHandler
 	appapi  *httprest.AppApiHandler
-	errResp *response.ErrorHandle
+	respond *respond.Handle
 	logger  *slog.Logger
 }
 
 func New(
 	oapi *httprest.OpenApiHandler,
 	appapi *httprest.AppApiHandler,
-	errResp *response.ErrorHandle,
+	respond *respond.Handle,
 	logger *slog.Logger,
 ) (*Router, error) {
 	swagger, err := openapi.GetSwagger()
@@ -44,7 +44,7 @@ func New(
 		swagger: swagger,
 		openapi: oapi,
 		appapi:  appapi,
-		errResp: errResp,
+		respond: respond,
 		logger:  logger,
 	}, nil
 }
@@ -80,10 +80,10 @@ func (router Router) Setup(cfg config.App) http.Handler {
 	openapi.HandlerWithOptions(
 		openapi.NewStrictHandlerWithOptions(router.openapi, nil, openapi.StrictHTTPServerOptions{
 			RequestErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
-				router.errResp.Send(r.Context(), w, err)
+				router.respond.Error(r.Context(), w, err)
 			},
 			ResponseErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
-				router.errResp.Send(r.Context(), w, err)
+				router.respond.Error(r.Context(), w, err)
 			},
 		}),
 		openapi.ChiServerOptions{
@@ -92,12 +92,12 @@ func (router Router) Setup(cfg config.App) http.Handler {
 				nethttpmiddleware.OapiRequestValidatorWithOptions(router.swagger, &nethttpmiddleware.Options{
 					ErrorHandler: func(w http.ResponseWriter, message string, statusCode int) {
 						err := errs.NewBaseError(message, errors.New(http.StatusText(statusCode)), statusCode)
-						router.errResp.Send(middleware.SetEntryLoggerCtxFromWriter(w), w, err)
+						router.respond.Error(middleware.SetEntryLoggerCtxFromWriter(w), w, err)
 					},
 				}),
 			},
 			ErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
-				router.errResp.Send(r.Context(), w, err)
+				router.respond.Error(r.Context(), w, err)
 			},
 		})
 
@@ -107,7 +107,7 @@ func (router Router) Setup(cfg config.App) http.Handler {
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		router.errResp.Send(r.Context(), w, errs.NewNotFoundError(nil))
+		router.respond.Error(r.Context(), w, errs.NewNotFoundError(nil))
 	})
 
 	return r

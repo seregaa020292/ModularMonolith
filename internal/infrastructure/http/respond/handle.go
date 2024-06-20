@@ -1,4 +1,4 @@
-package response
+package respond
 
 import (
 	"context"
@@ -14,13 +14,21 @@ import (
 	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
 )
 
-type ErrorHandle struct{}
+type Handle struct{}
 
-func NewErrorHandle() *ErrorHandle {
-	return &ErrorHandle{}
+func New() *Handle {
+	return &Handle{}
 }
 
-func (e ErrorHandle) Send(ctx context.Context, w http.ResponseWriter, err error) {
+func (h Handle) Success(w http.ResponseWriter, data any, status int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+func (h Handle) Error(ctx context.Context, w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/problem+json")
 
 	logger := middleware.GetEntryLogger(ctx)

@@ -11,7 +11,7 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/config"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/query"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/repository"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/response"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/respond"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/router"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/logger"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql"
@@ -55,10 +55,10 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 	appApiHandler := &httprest.AppApiHandler{
 		AdminHandler: adminHandler,
 	}
-	errorHandle := response.NewErrorHandle()
+	handle := respond.New()
 	app := cfg.App
 	slogLogger := logger.NewSlog(app)
-	routerRouter, err := router.New(openApiHandler, appApiHandler, errorHandle, slogLogger)
+	routerRouter, err := router.New(openApiHandler, appApiHandler, handle, slogLogger)
 	if err != nil {
 		cleanup()
 		return nil, nil, err

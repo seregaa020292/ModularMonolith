@@ -11,7 +11,7 @@ import (
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
 	"github.com/seregaa020292/ModularMonolith/internal/fine"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/response"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/respond"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/router"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/logger"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql"
@@ -38,7 +38,7 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		// Инициализация компонентов
 		pgsql.New,
 		logger.NewSlog,
-		response.NewErrorHandle,
+		respond.New,
 
 		// Модули доменной логики
 		fine.ModuleSet,
