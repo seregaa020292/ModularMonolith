@@ -51,11 +51,11 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 		PaymentHandler:      paymentHandler,
 		VehicleHandler:      vehicleHandler,
 	}
-	adminHandler := httprest.NewAdminHandler()
+	handle := respond.New()
+	adminHandler := httprest.NewAdminHandler(handle)
 	appApiHandler := &httprest.AppApiHandler{
 		AdminHandler: adminHandler,
 	}
-	handle := respond.New()
 	app := cfg.App
 	slogLogger := logger.NewSlog(app)
 	routerRouter, err := router.New(openApiHandler, appApiHandler, handle, slogLogger)
