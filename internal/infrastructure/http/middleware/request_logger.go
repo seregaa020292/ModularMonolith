@@ -1,10 +1,8 @@
 package middleware
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"log/slog"
 	"net/http"
 	"time"
@@ -12,6 +10,7 @@ import (
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config/consts"
+	"github.com/seregaa020292/ModularMonolith/pkg/reqbody"
 	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
 	"github.com/seregaa020292/ModularMonolith/pkg/utils/sensitive"
 )
@@ -24,7 +23,7 @@ type (
 		*RequestLogger
 		logger *slog.Logger
 		req    *http.Request
-		body   map[string]any
+		body   []byte
 	}
 )
 
@@ -58,17 +57,22 @@ func (l *RequestLogger) NewLogEntry(r *http.Request) chimiddleware.LogEntry {
 			slog.String("correlation_id", GetCorrelationID(r.Context())),
 		),
 		req:  r,
-		body: sanitizeRequestBody(r, consts.SensitiveDataMask, consts.SensitiveFilerKeys),
+		body: reqbody.CopyBody(r),
 	}
 }
 
 func (l *entryLogger) Write(status, bytes int, header http.Header, elapsed time.Duration, extra any) {
+	body, _ := sensitive.MapUnmarshal(l.body,
+		consts.SensitiveDataMask,
+		consts.SensitiveFilerKeys,
+	)
+
 	log := l.logger.With(
 		slog.String("url", fmt.Sprintf("%s://%s%s %s",
 			gog.If(l.req.TLS != nil, "https", "http"), l.req.Host, l.req.RequestURI, l.req.Proto)),
 		slog.String("method", l.req.Method),
 		slog.Int("status", status),
-		slog.Any("body", l.body),
+		slog.Any("body", body),
 		slog.String("user_agent", l.req.UserAgent()),
 		slog.String("remote_addr", l.req.RemoteAddr),
 		slog.String("referer", l.req.Referer()),
@@ -91,27 +95,4 @@ func (l *entryLogger) Panic(v any, stack []byte) {
 		slog.String("stack", string(stack)),
 		slog.String("panic", fmt.Sprintf("%+v", v)),
 	)
-}
-
-// sanitizeRequestBody читает и санитизирует тело запроса, удаляя конфиденциальные данные.
-// Возвращает карту с данными.
-func sanitizeRequestBody(r *http.Request, mask string, filerKeys []string) map[string]any {
-	if r.Body == nil {
-		return nil
-	}
-
-	defer r.Body.Close()
-	bodyBytes, err := io.ReadAll(r.Body)
-	if err != nil {
-		return nil
-	}
-
-	r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-
-	body, err := sensitive.MapUnmarshal(bodyBytes, mask, filerKeys)
-	if err != nil {
-		return nil
-	}
-
-	return body
 }
