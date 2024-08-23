@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"cmp"
 	"context"
 	"net/http"
 
@@ -16,10 +17,8 @@ type correlationIDKey struct{}
 
 func CorrelationID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id := r.Header.Get(CorrelationIDHeader)
-		if id == "" {
-			id = r.Header.Get(XCorrelationIDHeader)
-		}
+		id := cmp.Or(r.Header.Get(CorrelationIDHeader), r.Header.Get(XCorrelationIDHeader))
+
 		if id == "" {
 			id = uuid.NewString()
 		}
