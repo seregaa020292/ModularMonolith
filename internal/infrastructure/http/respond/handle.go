@@ -11,7 +11,7 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/errs"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/middleware"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
-	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
+	"github.com/seregaa020292/ModularMonolith/pkg/gog"
 )
 
 type Handle struct{}

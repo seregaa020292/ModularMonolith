@@ -5,7 +5,7 @@ import (
 
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
 	"github.com/seregaa020292/ModularMonolith/internal/models/app/public/model"
-	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
+	"github.com/seregaa020292/ModularMonolith/pkg/gog"
 )
 
 func ListFines(fines []*model.Fines) openapi.ListFines200JSONResponse {

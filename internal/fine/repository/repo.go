@@ -10,7 +10,7 @@ import (
 
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql"
 	"github.com/seregaa020292/ModularMonolith/internal/models/app/public/model"
-	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
+	"github.com/seregaa020292/ModularMonolith/pkg/gog"
 )
 
 type FineRepo struct {

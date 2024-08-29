@@ -10,9 +10,9 @@ import (
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config/consts"
+	"github.com/seregaa020292/ModularMonolith/pkg/gog"
 	"github.com/seregaa020292/ModularMonolith/pkg/reqbody"
-	"github.com/seregaa020292/ModularMonolith/pkg/utils/gog"
-	"github.com/seregaa020292/ModularMonolith/pkg/utils/sensitive"
+	"github.com/seregaa020292/ModularMonolith/pkg/sensitive"
 )
 
 type (
