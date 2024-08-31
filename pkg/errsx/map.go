@@ -9,6 +9,10 @@ import (
 // Map представляет собой коллекцию ошибок, индексированных по имени.
 type Map map[string]error
 
+func NewMap() *Map {
+	return new(Map)
+}
+
 // Get вернет строку ошибки для данного ключа.
 func (m *Map) Get(key string) string {
 	if err := (*m)[key]; err != nil {
@@ -22,6 +26,13 @@ func (m *Map) Has(key string) bool {
 	_, ok := (*m)[key]
 
 	return ok
+}
+
+func (m *Map) Exist() bool {
+	if m != nil {
+		return len(*m) != 0
+	}
+	return false
 }
 
 // Set ассоциирует данную ошибку с данным ключом.
@@ -67,7 +78,6 @@ func (m *Map) String() string {
 	return m.Error()
 }
 
-// MarshalJSON реализует интерфейс json.Marshaler.
 func (m *Map) MarshalJSON() ([]byte, error) {
 	errs := make([]string, 0, len(*m))
 	for key, err := range *m {
@@ -75,4 +85,12 @@ func (m *Map) MarshalJSON() ([]byte, error) {
 	}
 
 	return []byte(fmt.Sprintf("{%v}", strings.Join(errs, ", "))), nil
+}
+
+func UnwrapToMap(err error) *Map {
+	var errs *Map
+	if errors.As(err, &errs) {
+		return errs
+	}
+	return nil
 }

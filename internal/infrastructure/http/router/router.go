@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -93,6 +94,10 @@ func (router Router) Setup(cfg config.App) http.Handler {
 					ErrorHandler: func(w http.ResponseWriter, message string, statusCode int) {
 						err := errs.NewBaseError(message, errors.New(http.StatusText(statusCode)), statusCode)
 						router.respond.Error(middleware.WrapCtxLogger(w), w, err)
+					},
+					Options: openapi3filter.Options{
+						ExcludeRequestBody:        true,
+						ExcludeRequestQueryParams: true,
 					},
 				}),
 			},

@@ -11,24 +11,24 @@ import (
 func TestMap_Error(t *testing.T) {
 	tests := []struct {
 		name string
-		m    Map
+		m    *Map
 		want []string
 	}{
 		{
 			name: "Empty map should return empty string",
-			m:    Map{},
+			m:    NewMap(),
 			want: []string{""},
 		},
 		{
 			name: "Single error in map should return correct string",
-			m: Map{
+			m: &Map{
 				"foo": errors.New("bar"),
 			},
 			want: []string{"foo: bar"},
 		},
 		{
 			name: "Multiple errors in map should return concatenated string",
-			m: Map{
+			m: &Map{
 				"foo": errors.New("bar"),
 				"bar": errors.New("baz"),
 			},
@@ -45,24 +45,24 @@ func TestMap_Error(t *testing.T) {
 func TestMap_String(t *testing.T) {
 	tests := []struct {
 		name string
-		m    Map
+		m    *Map
 		want []string
 	}{
 		{
 			name: "Empty map should return empty string representation",
-			m:    Map{},
+			m:    NewMap(),
 			want: []string{""},
 		},
 		{
 			name: "Single error in map should return correct string representation",
-			m: Map{
+			m: &Map{
 				"foo": errors.New("bar"),
 			},
 			want: []string{"foo: bar"},
 		},
 		{
 			name: "Multiple errors in map should return correct string representation",
-			m: Map{
+			m: &Map{
 				"foo": errors.New("bar"),
 				"bar": errors.New("baz"),
 			},
@@ -79,19 +79,19 @@ func TestMap_String(t *testing.T) {
 func TestMap_Get(t *testing.T) {
 	tests := []struct {
 		name string
-		m    Map
+		m    *Map
 		key  string
 		want string
 	}{
 		{
 			name: "Getting from empty map should return empty string",
-			m:    Map{},
+			m:    NewMap(),
 			key:  "foo",
 			want: "",
 		},
 		{
 			name: "Getting existing key should return associated error message",
-			m: Map{
+			m: &Map{
 				"foo": errors.New("bar"),
 			},
 			key:  "foo",
@@ -99,7 +99,7 @@ func TestMap_Get(t *testing.T) {
 		},
 		{
 			name: "Getting non-existing key should return empty string",
-			m: Map{
+			m: &Map{
 				"foo": errors.New("bar"),
 				"bar": errors.New("baz"),
 			},
@@ -117,19 +117,19 @@ func TestMap_Get(t *testing.T) {
 func TestMap_Has(t *testing.T) {
 	tests := []struct {
 		name string
-		m    Map
+		m    *Map
 		key  string
 		want bool
 	}{
 		{
 			name: "Empty map should not have any keys",
-			m:    Map{},
+			m:    NewMap(),
 			key:  "foo",
 			want: false,
 		},
 		{
 			name: "Map with single key should confirm existence",
-			m: Map{
+			m: &Map{
 				"foo": errors.New("bar"),
 			},
 			key:  "foo",
@@ -137,7 +137,7 @@ func TestMap_Has(t *testing.T) {
 		},
 		{
 			name: "Map should return false for non-existing key",
-			m: Map{
+			m: &Map{
 				"foo": errors.New("bar"),
 			},
 			key:  "bar",
@@ -154,24 +154,24 @@ func TestMap_Has(t *testing.T) {
 func TestMap_MarshalJSON(t *testing.T) {
 	tests := []struct {
 		name string
-		m    Map
+		m    *Map
 		want []byte
 	}{
 		{
 			name: "Marshaling empty map should return empty JSON object",
-			m:    Map{},
+			m:    NewMap(),
 			want: []byte("{}"),
 		},
 		{
 			name: "Marshaling single error should return correct JSON object",
-			m: Map{
+			m: &Map{
 				"foo": errors.New("bar"),
 			},
 			want: []byte("{\"foo\":\"bar\"}"),
 		},
 		{
 			name: "Marshaling multiple errors should return correct JSON object",
-			m: Map{
+			m: &Map{
 				"foo": errors.New("bar"),
 				"bar": errors.New("baz"),
 			},
@@ -194,7 +194,7 @@ func TestMap_Set(t *testing.T) {
 	}
 	tests := []struct {
 		name       string
-		m          Map
+		m          *Map
 		args       args
 		want       string
 		wantHas    bool
@@ -202,7 +202,7 @@ func TestMap_Set(t *testing.T) {
 	}{
 		{
 			name:       "Setting key should return empty string",
-			m:          Map{},
+			m:          NewMap(),
 			args:       args{},
 			want:       "",
 			wantHas:    false,
@@ -210,7 +210,7 @@ func TestMap_Set(t *testing.T) {
 		},
 		{
 			name: "Set on empty map should store the error message correctly",
-			m:    Map{},
+			m:    NewMap(),
 			args: args{
 				key: "foo",
 				msg: errors.New("bar"),

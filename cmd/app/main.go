@@ -8,8 +8,6 @@ import (
 )
 
 func main() {
-	cfg := config.MustNew()
-
-	a := app.New(cfg)
-	a.Run(context.Background())
+	app.New(config.MustNew()).
+		Run(context.Background())
 }
