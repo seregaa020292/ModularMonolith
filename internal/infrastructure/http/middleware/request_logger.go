@@ -33,14 +33,14 @@ func NewRequestLogger(logger *slog.Logger) *RequestLogger {
 	}
 }
 
-func GetEntryLogger(ctx context.Context) *slog.Logger {
+func LoggerFromCtx(ctx context.Context) *slog.Logger {
 	if entry, ok := ctx.Value(chimiddleware.LogEntryCtxKey).(*entryLogger); ok {
 		return entry.logger
 	}
 	return slog.Default()
 }
 
-func WrapCtxLogger(w http.ResponseWriter) context.Context {
+func LoggerWrapCtx(w http.ResponseWriter) context.Context {
 	return context.WithValue(context.Background(),
 		chimiddleware.LogEntryCtxKey,
 		&entryLogger{

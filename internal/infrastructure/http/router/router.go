@@ -93,7 +93,7 @@ func (router Router) Setup(cfg config.App) http.Handler {
 				nethttpmiddleware.OapiRequestValidatorWithOptions(router.swagger, &nethttpmiddleware.Options{
 					ErrorHandler: func(w http.ResponseWriter, message string, statusCode int) {
 						err := errs.NewBaseError(message, errors.New(http.StatusText(statusCode)), statusCode)
-						router.respond.Error(middleware.WrapCtxLogger(w), w, err)
+						router.respond.Error(middleware.LoggerWrapCtx(w), w, err)
 					},
 					Options: openapi3filter.Options{
 						ExcludeRequestBody:        true,

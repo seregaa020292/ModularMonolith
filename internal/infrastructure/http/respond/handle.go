@@ -31,7 +31,7 @@ func (h Handle) Success(w http.ResponseWriter, data any, status int) {
 func (h Handle) Error(ctx context.Context, w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/problem+json")
 
-	logger := middleware.GetEntryLogger(ctx)
+	logger := middleware.LoggerFromCtx(ctx)
 
 	var errCustom errs.ErrorCustomer
 	if errors.As(err, &errCustom) {
@@ -39,24 +39,18 @@ func (h Handle) Error(ctx context.Context, w http.ResponseWriter, err error) {
 		lvlLogger(errCustom.Error(), slog.Any("error", errCustom.OriginalError()))
 
 		w.WriteHeader(errCustom.StatusCode())
-		if err := json.NewEncoder(w).Encode(openapi.Error{
+		_ = json.NewEncoder(w).Encode(openapi.Error{
 			Code:    int32(errCustom.StatusCode()),
 			Message: errCustom.Error(),
-		}); err != nil {
-			logger.Error(err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		})
 		return
 	}
 
 	logger.Error(err.Error(), slog.Any("error", err))
 
 	w.WriteHeader(http.StatusInternalServerError)
-	if err := json.NewEncoder(w).Encode(openapi.Error{
+	_ = json.NewEncoder(w).Encode(openapi.Error{
 		Code:    0,
 		Message: http.StatusText(http.StatusInternalServerError),
-	}); err != nil {
-		logger.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	})
 }
