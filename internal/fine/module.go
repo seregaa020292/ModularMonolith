@@ -7,7 +7,7 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/fine/repository"
 )
 
-var ModuleSet = wire.NewSet(
+var Module = wire.NewSet(
 	repository.NewFineRepo,
 	wire.Bind(new(query.Repository), new(*repository.FineRepo)),
 	query.NewGetList,

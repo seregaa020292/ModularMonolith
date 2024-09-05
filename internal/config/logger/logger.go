@@ -16,9 +16,9 @@ type Config struct {
 
 func New(cfg Config) *slog.Logger {
 	opts := log.SlogOptions(cfg.Level)
+	writer := io.MultiWriter(os.Stdout)
 
 	var handler slog.Handler
-	writer := io.MultiWriter(os.Stdout)
 	switch cfg.Formatter {
 	case "json":
 		handler = slog.NewJSONHandler(writer, opts)
@@ -29,6 +29,7 @@ func New(cfg Config) *slog.Logger {
 	}
 
 	logger := slog.New(handler)
+
 	slog.SetDefault(logger)
 
 	return logger

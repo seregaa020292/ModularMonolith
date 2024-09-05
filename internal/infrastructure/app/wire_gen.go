@@ -13,22 +13,22 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/config/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/query"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/repository"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/respond"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/router"
 	repository2 "github.com/seregaa020292/ModularMonolith/internal/notification/repository"
 	repository3 "github.com/seregaa020292/ModularMonolith/internal/owner/repository"
 	repository4 "github.com/seregaa020292/ModularMonolith/internal/payment/repository"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
-	"log/slog"
 )
 
-// Injectors from service_provider.go:
+// Injectors from registry.go:
 
-// NewServiceProvider функция использует Google Wire для автоматической сборки зависимостей.
+// NewRegistry функция использует Google Wire для автоматической сборки зависимостей.
 //
 // В качестве параметров принимает контекст выполнения ctx и конфигурацию cfg.
-// Возвращает указатель на serviceProvider, функцию для очистки и ошибку, если таковая возникнет.
-func NewServiceProvider(ctx context.Context, cfg *config.Config) (*serviceProvider, func(), error) {
+// Возвращает указатель на Registry, функцию для очистки и ошибку, если таковая возникнет.
+func NewRegistry(ctx context.Context, cfg *config.Config) (*Registry, func(), error) {
 	pgConfig := cfg.PG
 	db, cleanup, err := pg.New(pgConfig)
 	if err != nil {
@@ -63,18 +63,17 @@ func NewServiceProvider(ctx context.Context, cfg *config.Config) (*serviceProvid
 		cleanup()
 		return nil, nil, err
 	}
-	appServiceProvider := &serviceProvider{
-		Router: routerRouter,
-		Logger: slogLogger,
+	http := server.New(routerRouter, slogLogger)
+	registry := &Registry{
+		server: http,
 	}
-	return appServiceProvider, func() {
+	return registry, func() {
 		cleanup()
 	}, nil
 }
 
-// service_provider.go:
+// registry.go:
 
-type serviceProvider struct {
-	Router *router.Router
-	Logger *slog.Logger
+type Registry struct {
+	server *server.Http
 }

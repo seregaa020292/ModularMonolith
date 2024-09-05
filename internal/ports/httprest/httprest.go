@@ -8,7 +8,7 @@ import (
 
 var _ openapi.StrictServerInterface = (*OpenApiHandler)(nil)
 
-var ModuleSet = wire.NewSet(
+var Module = wire.NewSet(
 	NewFineHandler,
 	NewNotificationHandler,
 	NewOwnerHandler,

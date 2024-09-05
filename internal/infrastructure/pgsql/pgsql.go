@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 
-	_ "github.com/lib/pq"
-
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql/transaction"
 )
 

@@ -2,11 +2,8 @@ package app
 
 import (
 	"context"
-	"log/slog"
-	"net/http"
 	"os"
 	"syscall"
-	"time"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
 	"github.com/seregaa020292/ModularMonolith/pkg/closer"
@@ -30,42 +27,26 @@ func New(cfg *config.Config) *App {
 	}
 }
 
-func (app App) Run(ctx context.Context) {
-	defer app.gracefulStop()
-
-	sp, clean, err := NewServiceProvider(ctx, app.cfg)
+func (a App) Run(ctx context.Context) {
+	registry, clean, err := NewRegistry(ctx, a.cfg)
 	if err != nil {
 		panic(err)
 	}
 
-	app.addCloser(clean)
+	defer a.gracefulStop()
+	a.addCloser(clean)
 
-	serv := &http.Server{
-		ReadTimeout:       5 * time.Second,
-		ReadHeaderTimeout: 2 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		IdleTimeout:       120 * time.Second,
-		Addr:              app.cfg.App.Addr(),
-		Handler:           sp.Router.Setup(app.cfg.App),
-	}
-
-	sp.Logger.Info("Starting server",
-		slog.String("app", app.cfg.App.Name),
-		slog.String("addr", serv.Addr),
-	)
-	if err := serv.ListenAndServe(); err != nil {
-		sp.Logger.Error(err.Error())
-	}
+	registry.server.Run(ctx, a.cfg.App)
 }
 
-func (app App) addCloser(fn func()) {
-	app.closer.Add(func() error {
+func (a App) addCloser(fn func()) {
+	a.closer.Add(func() error {
 		fn()
 		return nil
 	})
 }
 
-func (app App) gracefulStop() {
-	app.closer.CloseAll()
-	app.closer.Wait()
+func (a App) gracefulStop() {
+	a.closer.CloseAll()
+	a.closer.Wait()
 }

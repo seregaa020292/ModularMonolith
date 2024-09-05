@@ -6,6 +6,6 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/payment/repository"
 )
 
-var ModuleSet = wire.NewSet(
+var Module = wire.NewSet(
 	repository.NewPaymentRepo,
 )

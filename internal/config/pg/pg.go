@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	_ "github.com/lib/pq"
+
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql"
 )
 
