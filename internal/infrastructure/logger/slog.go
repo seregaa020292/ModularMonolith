@@ -1,42 +1,21 @@
 package logger
 
 import (
-	"io"
 	"log/slog"
-	"os"
 
 	"github.com/pkg/errors"
-
-	"github.com/seregaa020292/ModularMonolith/internal/config"
-	"github.com/seregaa020292/ModularMonolith/pkg/prettylog"
 )
 
-func NewSlog(cfg config.App) *slog.Logger {
+func SlogOptions(lvl string) *slog.HandlerOptions {
 	var level slog.Level
-	if err := level.UnmarshalText([]byte(cfg.LogLevel)); err != nil {
+	if err := level.UnmarshalText([]byte(lvl)); err != nil {
 		level = slog.LevelInfo
 	}
 
-	opts := &slog.HandlerOptions{
+	return &slog.HandlerOptions{
 		Level:       level,
 		ReplaceAttr: replaceAttr,
 	}
-
-	var handler slog.Handler
-	writer := io.MultiWriter(os.Stdout)
-	switch cfg.LogFormatter {
-	case "json":
-		handler = slog.NewJSONHandler(writer, opts)
-	case "pretty":
-		handler = prettylog.New(writer, opts)
-	default:
-		handler = slog.NewTextHandler(writer, opts)
-	}
-
-	logger := slog.New(handler)
-	slog.SetDefault(logger)
-
-	return logger
 }
 
 func replaceAttr(_ []string, a slog.Attr) slog.Attr {
@@ -47,7 +26,6 @@ func replaceAttr(_ []string, a slog.Attr) slog.Attr {
 			a.Value = fmtErr(v)
 		}
 	}
-
 	return a
 }
 

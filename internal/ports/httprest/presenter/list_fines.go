@@ -3,7 +3,7 @@ package presenter
 import (
 	openapitypes "github.com/oapi-codegen/runtime/types"
 
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/openapi"
 	"github.com/seregaa020292/ModularMonolith/internal/models/app/public/model"
 	"github.com/seregaa020292/ModularMonolith/pkg/gog"
 )

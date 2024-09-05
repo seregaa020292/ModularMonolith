@@ -13,11 +13,11 @@ import (
 )
 
 type App struct {
-	cfg    config.Config
+	cfg    *config.Config
 	closer *closer.Closer
 }
 
-func New(cfg config.Config) *App {
+func New(cfg *config.Config) *App {
 	return &App{
 		cfg: cfg,
 		closer: closer.New(

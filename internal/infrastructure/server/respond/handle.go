@@ -9,8 +9,8 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/errs"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/middleware"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/middleware"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/openapi"
 	"github.com/seregaa020292/ModularMonolith/pkg/gog"
 )
 

@@ -10,11 +10,11 @@ import (
 	"github.com/google/wire"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
+	"github.com/seregaa020292/ModularMonolith/internal/config/logger"
+	"github.com/seregaa020292/ModularMonolith/internal/config/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/fine"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/respond"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/router"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/logger"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/respond"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/router"
 	"github.com/seregaa020292/ModularMonolith/internal/notification"
 	"github.com/seregaa020292/ModularMonolith/internal/owner"
 	"github.com/seregaa020292/ModularMonolith/internal/payment"
@@ -30,14 +30,14 @@ type serviceProvider struct {
 //
 // В качестве параметров принимает контекст выполнения ctx и конфигурацию cfg.
 // Возвращает указатель на serviceProvider, функцию для очистки и ошибку, если таковая возникнет.
-func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvider, func(), error) {
+func NewServiceProvider(ctx context.Context, cfg *config.Config) (*serviceProvider, func(), error) {
 	panic(wire.Build(
 		// Получения конфигурационных настроек
-		wire.FieldsOf(new(config.Config), "App", "PG"),
+		wire.FieldsOf(new(*config.Config), "PG", "Logger"),
 
 		// Инициализация компонентов
-		pgsql.New,
-		logger.NewSlog,
+		pg.New,
+		logger.New,
 		respond.New,
 
 		// Модули доменной логики

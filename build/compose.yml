@@ -26,13 +26,13 @@ services:
   app-swagger:
     image: swaggerapi/swagger-ui
     environment:
-      SWAGGER_JSON: /specs/swagger.yml
+      SWAGGER_JSON: /specification/swagger.yml
     ports:
       - "${SWAGGER_UI_PORT:-8081}:8080"
     volumes:
       - type: bind
-        source: ../pkg/specs/openapi
-        target: /specs
+        source: ../pkg/specification/openapi
+        target: /specification
         read_only: true
 
   app-pg:

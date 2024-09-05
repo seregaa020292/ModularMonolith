@@ -9,12 +9,12 @@ package app
 import (
 	"context"
 	"github.com/seregaa020292/ModularMonolith/internal/config"
+	"github.com/seregaa020292/ModularMonolith/internal/config/logger"
+	"github.com/seregaa020292/ModularMonolith/internal/config/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/query"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/repository"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/respond"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/router"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/logger"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/pgsql"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/respond"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/router"
 	repository2 "github.com/seregaa020292/ModularMonolith/internal/notification/repository"
 	repository3 "github.com/seregaa020292/ModularMonolith/internal/owner/repository"
 	repository4 "github.com/seregaa020292/ModularMonolith/internal/payment/repository"
@@ -28,9 +28,9 @@ import (
 //
 // В качестве параметров принимает контекст выполнения ctx и конфигурацию cfg.
 // Возвращает указатель на serviceProvider, функцию для очистки и ошибку, если таковая возникнет.
-func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvider, func(), error) {
-	pg := cfg.PG
-	db, cleanup, err := pgsql.New(pg)
+func NewServiceProvider(ctx context.Context, cfg *config.Config) (*serviceProvider, func(), error) {
+	pgConfig := cfg.PG
+	db, cleanup, err := pg.New(pgConfig)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -56,8 +56,8 @@ func NewServiceProvider(ctx context.Context, cfg config.Config) (*serviceProvide
 	appApiHandler := &httprest.AppApiHandler{
 		AdminHandler: adminHandler,
 	}
-	app := cfg.App
-	slogLogger := logger.NewSlog(app)
+	loggerConfig := cfg.Logger
+	slogLogger := logger.New(loggerConfig)
 	routerRouter, err := router.New(openApiHandler, appApiHandler, handle, slogLogger)
 	if err != nil {
 		cleanup()

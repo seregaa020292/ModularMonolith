@@ -51,8 +51,8 @@ migrate-down:
 	$(LOCAL_BIN)/goose -dir $(MIGRATION_DIR) postgres ${PG_DSN} down -v
 
 gen-oapi-server:
-	OUTPUT_DIR=./internal/infrastructure/openapi ; \
- 	SPEC_FILE=./pkg/specs/openapi/swagger.yml ; \
+	OUTPUT_DIR=./internal/infrastructure/server/openapi ; \
+ 	SPEC_FILE=./pkg/specification/openapi/swagger.yml ; \
 	$(LOCAL_BIN)/oapi-codegen -generate chi-server,strict-server -package openapi -o $$OUTPUT_DIR/openapi_server.go $$SPEC_FILE ; \
 	$(LOCAL_BIN)/oapi-codegen -generate types -package openapi -o $$OUTPUT_DIR/openapi_types.go $$SPEC_FILE ; \
 	$(LOCAL_BIN)/oapi-codegen -generate spec -package openapi -o $$OUTPUT_DIR/openapi_spec.go $$SPEC_FILE

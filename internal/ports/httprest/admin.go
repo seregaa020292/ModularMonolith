@@ -3,7 +3,7 @@ package httprest
 import (
 	"net/http"
 
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/respond"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/respond"
 )
 
 type AdminHandler struct {

@@ -3,7 +3,7 @@ package httprest
 import (
 	"context"
 
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/openapi"
 	"github.com/seregaa020292/ModularMonolith/internal/notification/repository"
 )
 

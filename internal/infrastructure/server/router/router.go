@@ -14,11 +14,11 @@ import (
 	"github.com/go-chi/httprate"
 	nethttpmiddleware "github.com/oapi-codegen/nethttp-middleware"
 
-	"github.com/seregaa020292/ModularMonolith/internal/config"
+	"github.com/seregaa020292/ModularMonolith/internal/config/app"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/errs"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/middleware"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/http/respond"
-	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/openapi"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/middleware"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/openapi"
+	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/respond"
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
 )
 
@@ -50,7 +50,7 @@ func New(
 	}, nil
 }
 
-func (router Router) Setup(cfg config.App) http.Handler {
+func (router Router) Setup(cfg app.Config) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(chimiddleware.Heartbeat("/health"))
