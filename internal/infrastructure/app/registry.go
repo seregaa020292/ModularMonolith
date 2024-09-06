@@ -22,7 +22,7 @@ import (
 )
 
 type Registry struct {
-	server *server.Http
+	server *server.Server
 }
 
 // NewRegistry функция использует Google Wire для автоматической сборки зависимостей.

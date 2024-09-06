@@ -63,9 +63,9 @@ func NewRegistry(ctx context.Context, cfg *config.Config) (*Registry, func(), er
 		cleanup()
 		return nil, nil, err
 	}
-	http := server.New(routerRouter, slogLogger)
+	serverServer := server.New(routerRouter, slogLogger)
 	registry := &Registry{
-		server: http,
+		server: serverServer,
 	}
 	return registry, func() {
 		cleanup()
@@ -75,5 +75,5 @@ func NewRegistry(ctx context.Context, cfg *config.Config) (*Registry, func(), er
 // registry.go:
 
 type Registry struct {
-	server *server.Http
+	server *server.Server
 }
