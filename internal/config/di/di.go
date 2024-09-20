@@ -12,13 +12,13 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/config/logger"
 	"github.com/seregaa020292/ModularMonolith/internal/config/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/fine"
+	"github.com/seregaa020292/ModularMonolith/internal/handlers/httprest"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/respond"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/router"
 	"github.com/seregaa020292/ModularMonolith/internal/notification"
 	"github.com/seregaa020292/ModularMonolith/internal/owner"
 	"github.com/seregaa020292/ModularMonolith/internal/payment"
-	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
 )
 
 type container struct {

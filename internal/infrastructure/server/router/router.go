@@ -15,11 +15,11 @@ import (
 	nethttpmiddleware "github.com/oapi-codegen/nethttp-middleware"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config/app"
+	"github.com/seregaa020292/ModularMonolith/internal/handlers/httprest"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/errs"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/middleware"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/openapi"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/respond"
-	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
 )
 
 type Router struct {

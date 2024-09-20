@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/seregaa020292/ModularMonolith/internal/fine/query"
+	"github.com/seregaa020292/ModularMonolith/internal/handlers/httprest/presenter"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/errs"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/openapi"
-	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest/presenter"
 )
 
 type FineHandler struct {

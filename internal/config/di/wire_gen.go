@@ -13,13 +13,13 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/config/pg"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/query"
 	"github.com/seregaa020292/ModularMonolith/internal/fine/repository"
+	"github.com/seregaa020292/ModularMonolith/internal/handlers/httprest"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/respond"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/router"
 	repository2 "github.com/seregaa020292/ModularMonolith/internal/notification/repository"
 	repository3 "github.com/seregaa020292/ModularMonolith/internal/owner/repository"
 	repository4 "github.com/seregaa020292/ModularMonolith/internal/payment/repository"
-	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
 )
 
 // Injectors from di.go:
