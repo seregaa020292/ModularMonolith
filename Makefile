@@ -64,7 +64,7 @@ gen-jet:
 	$(LOCAL_BIN)/jet -source=postgres -dsn=${PG_DSN} -path=./internal/models -ignore-tables=goose_db_version
 
 gen-wire:
-	$(LOCAL_BIN)/wire ./internal/infrastructure/app
+	$(LOCAL_BIN)/wire ./internal/config/di
 
 env-create:
 	[ -f ./build/.env ] || cp ./build/.env.example ./build/.env

@@ -1,7 +1,7 @@
 //go:build wireinject
 // +build wireinject
 
-package app
+package di
 
 import (
 	"context"
@@ -21,15 +21,15 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/ports/httprest"
 )
 
-type Registry struct {
-	server *server.Server
+type container struct {
+	Server *server.Server
 }
 
 // NewRegistry функция использует Google Wire для автоматической сборки зависимостей.
 //
 // В качестве параметров принимает контекст выполнения ctx и конфигурацию cfg.
 // Возвращает указатель на Registry, функцию для очистки и ошибку, если таковая возникнет.
-func NewRegistry(ctx context.Context, cfg *config.Config) (*Registry, func(), error) {
+func New(ctx context.Context, cfg *config.Config) (*container, func(), error) {
 	panic(wire.Build(
 		// Получения конфигурационных настроек
 		wire.FieldsOf(new(*config.Config), "PG", "Logger"),
@@ -47,11 +47,11 @@ func NewRegistry(ctx context.Context, cfg *config.Config) (*Registry, func(), er
 
 		// HTTP-обработчики
 		httprest.Module,
-		router.New,
 
+		router.New,
 		server.New,
 
 		// Агрегатор всех сервисов и компонентов
-		wire.Struct(new(Registry), "*"),
+		wire.Struct(new(container), "*"),
 	))
 }

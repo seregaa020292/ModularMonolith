@@ -6,6 +6,7 @@ import (
 	"syscall"
 
 	"github.com/seregaa020292/ModularMonolith/internal/config"
+	"github.com/seregaa020292/ModularMonolith/internal/config/di"
 	"github.com/seregaa020292/ModularMonolith/pkg/closer"
 )
 
@@ -28,7 +29,7 @@ func New(cfg *config.Config) *App {
 }
 
 func (a App) Run(ctx context.Context) {
-	registry, clean, err := NewRegistry(ctx, a.cfg)
+	container, clean, err := di.New(ctx, a.cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +37,7 @@ func (a App) Run(ctx context.Context) {
 	defer a.gracefulStop()
 	a.addCloser(clean)
 
-	registry.server.Run(ctx, a.cfg.App)
+	container.Server.Run(ctx, a.cfg.App)
 }
 
 func (a App) addCloser(fn func()) {
