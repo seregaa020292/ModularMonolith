@@ -20,6 +20,7 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/middleware"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/openapi"
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/respond"
+	"github.com/seregaa020292/ModularMonolith/pkg/gog"
 )
 
 type Router struct {
@@ -35,19 +36,14 @@ func New(
 	appapi *httprest.AppApiHandler,
 	respond *respond.Handle,
 	logger *slog.Logger,
-) (*Router, error) {
-	swagger, err := openapi.GetSwagger()
-	if err != nil {
-		return nil, err
-	}
-
+) *Router {
 	return &Router{
-		swagger: swagger,
+		swagger: gog.Must(openapi.GetSwagger()),
 		openapi: oapi,
 		appapi:  appapi,
 		respond: respond,
 		logger:  logger,
-	}, nil
+	}
 }
 
 func (router Router) Setup(cfg app.Config) http.Handler {

@@ -58,11 +58,7 @@ func New(ctx context.Context, cfg *config.Config) (*container, func(), error) {
 	}
 	loggerConfig := cfg.Logger
 	slogLogger := logger.New(loggerConfig)
-	routerRouter, err := router.New(openApiHandler, appApiHandler, handle, slogLogger)
-	if err != nil {
-		cleanup()
-		return nil, nil, err
-	}
+	routerRouter := router.New(openApiHandler, appApiHandler, handle, slogLogger)
 	serverServer := server.New(routerRouter, slogLogger)
 	diContainer := &container{
 		Server: serverServer,
