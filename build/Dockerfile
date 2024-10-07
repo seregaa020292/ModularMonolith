@@ -20,6 +20,27 @@ RUN --mount=type=cache,target=${GOMODCACHE} \
     go mod download
 
 #-------------------------------------------------------------------------------
+# STAGE: CLI
+#-------------------------------------------------------------------------------
+FROM golang:${GO_VERSION}-alpine AS cli
+ARG UID=1000
+ARG GID=$UID
+ARG GOLANGCI_LINT_VERSION=1.59.0
+ARG GOOSE_VERSION=3.20.0
+ARG OAPI_CODEGEN_VERSION=2.3.0
+ARG JET_VERSION=2.11.1
+ARG WIRE_VERSION=0.6.0
+WORKDIR /app
+RUN apk --update add curl
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${GOPATH}/bin v${GOLANGCI_LINT_VERSION}
+RUN curl -sSfL https://raw.githubusercontent.com/pressly/goose/master/install.sh | GOOSE_INSTALL=${GOPATH} sh -s v${GOOSE_VERSION}
+RUN go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v${OAPI_CODEGEN_VERSION}
+RUN go install github.com/go-jet/jet/v2/cmd/jet@v${JET_VERSION}
+RUN go install github.com/google/wire/cmd/wire@v${WIRE_VERSION}
+RUN addgroup -g ${GID} app && adduser -u ${UID} -G app -s /bin/sh -D app
+USER app
+
+#-------------------------------------------------------------------------------
 # STAGE: TEST
 #-------------------------------------------------------------------------------
 FROM base AS test
