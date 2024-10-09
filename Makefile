@@ -6,7 +6,7 @@ DOCKERFILE_PATH:=./build/Dockerfile
 COMPOSE_FILE:=./build/compose.yml
 MIGRATION_DIR:=./migrations
 
-CLI_NAME:=app-cli
+CLI_NAME:=cli-$(shell basename "$(CURDIR)")
 CLI_DOCKER_EXEC:=docker run --rm --mount type=bind,source=./,target=/app $(CLI_NAME)
 
 CMD_ARGS?=$(filter-out $@, $(MAKECMDGOALS)) $(MAKEFLAGS)
