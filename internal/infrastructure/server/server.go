@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"log/slog"
 	"net/http"
 	"time"
@@ -10,33 +9,41 @@ import (
 	"github.com/seregaa020292/ModularMonolith/internal/infrastructure/server/router"
 )
 
+type Option func(*http.Server)
+
 type Server struct {
-	router *router.Router
+	cfg    app.Config
 	logger *slog.Logger
+	serv   *http.Server
 }
 
-func New(router *router.Router, logger *slog.Logger) *Server {
-	return &Server{
-		router: router,
-		logger: logger,
-	}
-}
-
-func (s *Server) Run(ctx context.Context, cfg app.Config) {
+func New(cfg app.Config, logger *slog.Logger, router *router.Router, options ...Option) *Server {
 	serv := &http.Server{
 		ReadTimeout:       5 * time.Second,
 		ReadHeaderTimeout: 2 * time.Second,
 		WriteTimeout:      10 * time.Second,
 		IdleTimeout:       120 * time.Second,
 		Addr:              cfg.Addr(),
-		Handler:           s.router.Setup(cfg),
+		Handler:           router.Setup(cfg),
 	}
 
+	for _, option := range options {
+		option(serv)
+	}
+
+	return &Server{
+		cfg:    cfg,
+		logger: logger,
+		serv:   serv,
+	}
+}
+
+func (s *Server) Run() {
 	s.logger.Info("Starting server",
-		slog.String("app", cfg.Name),
-		slog.String("addr", serv.Addr),
+		slog.String("app", s.cfg.Name),
+		slog.String("addr", s.serv.Addr),
 	)
-	if err := serv.ListenAndServe(); err != nil {
+	if err := s.serv.ListenAndServe(); err != nil {
 		s.logger.Error(err.Error())
 	}
 }

@@ -32,7 +32,7 @@ type container struct {
 func New(ctx context.Context, cfg *config.Config) (*container, func(), error) {
 	panic(wire.Build(
 		// Получения конфигурационных настроек
-		wire.FieldsOf(new(*config.Config), "PG", "Logger"),
+		wire.FieldsOf(new(*config.Config), "App", "PG", "Logger"),
 
 		// Инициализация компонентов
 		pg.New,
@@ -49,9 +49,15 @@ func New(ctx context.Context, cfg *config.Config) (*container, func(), error) {
 		httprest.Module,
 
 		router.New,
+
+		provideServOptions,
 		server.New,
 
 		// Агрегатор всех сервисов и компонентов
 		wire.Struct(new(container), "*"),
 	))
+}
+
+func provideServOptions() []server.Option {
+	return nil
 }

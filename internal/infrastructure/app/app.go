@@ -34,20 +34,11 @@ func (a App) Run(ctx context.Context) {
 		panic(err)
 	}
 
-	defer a.gracefulStop()
-	a.addCloser(clean)
-
-	container.Server.Run(ctx, a.cfg.App)
-}
-
-func (a App) addCloser(fn func()) {
+	defer a.closer.Wait()
 	a.closer.Add(func() error {
-		fn()
+		clean()
 		return nil
 	})
-}
 
-func (a App) gracefulStop() {
-	a.closer.CloseAll()
-	a.closer.Wait()
+	container.Server.Run(ctx, a.cfg.App)
 }

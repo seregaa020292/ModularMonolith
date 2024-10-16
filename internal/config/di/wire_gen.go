@@ -29,6 +29,9 @@ import (
 // В качестве параметров принимает контекст выполнения ctx и конфигурацию cfg.
 // Возвращает указатель на Registry, функцию для очистки и ошибку, если таковая возникнет.
 func New(ctx context.Context, cfg *config.Config) (*container, func(), error) {
+	appConfig := cfg.App
+	loggerConfig := cfg.Logger
+	slogLogger := logger.New(loggerConfig)
 	pgConfig := cfg.PG
 	db, cleanup, err := pg.New(pgConfig)
 	if err != nil {
@@ -56,10 +59,9 @@ func New(ctx context.Context, cfg *config.Config) (*container, func(), error) {
 	appApiHandler := &httprest.AppApiHandler{
 		AdminHandler: adminHandler,
 	}
-	loggerConfig := cfg.Logger
-	slogLogger := logger.New(loggerConfig)
 	routerRouter := router.New(openApiHandler, appApiHandler, handle, slogLogger)
-	serverServer := server.New(routerRouter, slogLogger)
+	v := provideServOptions()
+	serverServer := server.New(appConfig, slogLogger, routerRouter, v...)
 	diContainer := &container{
 		Server: serverServer,
 	}
@@ -72,4 +74,8 @@ func New(ctx context.Context, cfg *config.Config) (*container, func(), error) {
 
 type container struct {
 	Server *server.Server
+}
+
+func provideServOptions() []server.Option {
+	return nil
 }
