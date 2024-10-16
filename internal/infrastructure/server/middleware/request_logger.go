@@ -57,7 +57,7 @@ func (l *RequestLogger) NewLogEntry(r *http.Request) chimiddleware.LogEntry {
 			slog.String("correlation_id", GetCorrelationID(r.Context())),
 		),
 		req:  r,
-		body: reqbody.CopyBody(r),
+		body: reqbody.Copy(r),
 	}
 }
 

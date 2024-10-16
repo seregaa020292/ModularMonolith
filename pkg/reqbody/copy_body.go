@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func CopyBody(r *http.Request) []byte {
+func Copy(r *http.Request) []byte {
 	if r.Body == nil {
 		return nil
 	}
@@ -18,7 +18,7 @@ func CopyBody(r *http.Request) []byte {
 		return nil
 	}
 
-	r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+	r.Body = io.NopCloser(bytes.NewReader(bodyBytes))
 
 	return bodyBytes
 }
