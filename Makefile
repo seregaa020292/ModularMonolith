@@ -21,7 +21,7 @@ down:
 
 restart: down up
 
-init: env-create cli-build build migration-up
+init: env-create cli-build build migrate-up
 
 build:
 	docker compose -f $(COMPOSE_FILE) build
