@@ -20,7 +20,7 @@ services:
       PG_USER: ${PG_USER}
       PG_PASSWORD: ${PG_PASSWORD}
       PG_HOST: ${PG_HOST}
-      PG_PORT: 5432
+      PG_PORT: ${PG_PORT:-5432}
     restart: on-failure
 
   app-swagger:
@@ -42,7 +42,7 @@ services:
       POSTGRES_USER: ${PG_USER}
       POSTGRES_PASSWORD: ${PG_PASSWORD}
     ports:
-      - "${PG_PORT:-54321}:5432"
+      - "54321:${PG_PORT:-5432}"
     volumes:
       - type: volume
         source: app-pg_volume
@@ -56,3 +56,8 @@ services:
 
 volumes:
   app-pg_volume:
+
+networks:
+  default:
+    name: ${PROJECT_NAME}
+    driver: bridge

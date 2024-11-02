@@ -6,8 +6,8 @@ DOCKERFILE_PATH:=./build/Dockerfile
 COMPOSE_FILE:=./build/compose.yml
 MIGRATION_DIR:=./migrations
 
-CLI_NAME:=cli-$(shell basename "$(CURDIR)")
-CLI_DOCKER_EXEC:=docker run --rm --mount type=bind,source=./,target=/app $(CLI_NAME)
+CLI_NAME:=cli-$(PROJECT_NAME)
+CLI_DOCKER_EXEC:=docker run --rm --mount type=bind,source=./,target=/app --network $(PROJECT_NAME) $(CLI_NAME)
 
 CMD_ARGS?=$(filter-out $@, $(MAKECMDGOALS)) $(MAKEFLAGS)
 %:
@@ -51,13 +51,13 @@ migrate-create:
 	$(CLI_DOCKER_EXEC) goose -dir $(MIGRATION_DIR) create $(CMD_ARGS) sql
 
 migrate-status:
-	$(CLI_DOCKER_EXEC) goose -dir $(MIGRATION_DIR) postgres ${PG_DSN} status -v
+	$(CLI_DOCKER_EXEC) goose -dir $(MIGRATION_DIR) postgres $(PG_DSN) status -v
 
 migrate-up:
-	$(CLI_DOCKER_EXEC) goose -dir $(MIGRATION_DIR) postgres ${PG_DSN} up -v
+	$(CLI_DOCKER_EXEC) goose -dir $(MIGRATION_DIR) postgres $(PG_DSN) up -v
 
 migrate-down:
-	$(CLI_DOCKER_EXEC) goose -dir $(MIGRATION_DIR) postgres ${PG_DSN} down -v
+	$(CLI_DOCKER_EXEC) goose -dir $(MIGRATION_DIR) postgres $(PG_DSN) down -v
 
 gen-oapi-server:
 	OUTPUT_DIR=./internal/infrastructure/server/openapi ; \
@@ -70,7 +70,7 @@ gen-oapi-client:
 	#$(CLI_DOCKER_EXEC) oapi-codegen -generate client -package openapi -o $$OUTPUT_DIR/openapi_client.go $$SPEC_FILE
 
 gen-jet:
-	$(CLI_DOCKER_EXEC) jet -source=postgres -dsn=${PG_DSN} -path=./internal/models -ignore-tables=goose_db_version
+	$(CLI_DOCKER_EXEC) jet -source=postgres -dsn=$(PG_DSN) -path=./internal/models -ignore-tables=goose_db_version
 
 gen-wire:
 	$(CLI_DOCKER_EXEC) wire ./internal/config/di
