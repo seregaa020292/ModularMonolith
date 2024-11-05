@@ -15,7 +15,7 @@ func (d DB) ExecContext(ctx context.Context, query string, args ...any) (sql.Res
 	if tx := transaction.ExtractTx(ctx); tx != nil {
 		return tx.ExecContext(ctx, query, args...)
 	}
-	return d.DB.ExecContext(ctx, query, args)
+	return d.DB.ExecContext(ctx, query, args...)
 }
 
 func (d DB) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
